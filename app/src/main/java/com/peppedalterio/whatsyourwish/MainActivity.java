@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void setupViewPage(ViewPager viewPager) {
         SectionsPageAdapter adapter = new SectionsPageAdapter(getSupportFragmentManager());
+        //adapter.addFragment(new ContactsListFragment(), getString(R.string.contactslisttitletab));
         adapter.addFragment(new ContactsListFragment(), getString(R.string.contactslisttitletab));
         adapter.addFragment(new MyWishlistFragment(), getString(R.string.wishlisttitletab));
         viewPager.setAdapter(adapter);
