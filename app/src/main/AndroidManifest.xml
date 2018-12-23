@@ -21,4 +21,8 @@
         </activity>
     </application>
 
+    <!-- User permissions -->
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <!-- /User permissions -->
+
 </manifest>
