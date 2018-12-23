@@ -10,13 +10,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
 import android.widget.ArrayAdapter;
-import android.widget.CursorAdapter;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
-import android.widget.Toast;
 
 import com.peppedalterio.whatsyourwish.pojo.Contact;
 
@@ -82,6 +78,10 @@ public class ContactsListFragment extends Fragment {
         adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, listItems);
 
         listaContattiView.setAdapter(adapter);
+        listaContattiView.setOnItemClickListener((parent, view, position, id) -> {
+            String selectedItem = (String) parent.getItemAtPosition(position);
+            Log.d("CLICK", "clicked: "+selectedItem);
+        });
 
     }
 
