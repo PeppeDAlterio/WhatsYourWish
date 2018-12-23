@@ -24,8 +24,8 @@ class SectionsPageAdapter extends FragmentPagerAdapter {
 
     @Nullable
     @Override
-    public CharSequence getPageTitle(int position) {
-        return super.getPageTitle(position);
+    public CharSequence getPageTitle(int i) {
+        return fragmentTitleList.get(i);
     }
 
     @Override

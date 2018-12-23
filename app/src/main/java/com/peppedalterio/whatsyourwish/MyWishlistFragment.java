@@ -20,8 +20,8 @@ public class MyWishlistFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.contactslist_fragment, container, false);
-        bttst = (Button) view.findViewById(R.id.btnTEST);
+        View view = inflater.inflate(R.layout.mywishlist_fragment, container, false);
+        bttst = (Button) view.findViewById(R.id.btnTEST2);
 
         bttst.setOnClickListener( (View) -> {
             Toast.makeText(getActivity(), "WISH BTN1", Toast.LENGTH_SHORT).show();
