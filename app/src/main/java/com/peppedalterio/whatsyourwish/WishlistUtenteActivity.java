@@ -22,8 +22,8 @@ public class WishlistUtenteActivity extends AppCompatActivity {
 
             contact = (Contact) intent.getSerializableExtra("contact");
 
-            Log.i("EXTRA", "NAME="+contact.getName());
-            Log.i("EXTRA", "NUMBER="+contact.getPhoneNumber());
+            Log.i("EXTRA", "NAME=" + contact.getName());
+            Log.i("EXTRA", "NUMBER=" + contact.getPhoneNumber());
 
         }
 
