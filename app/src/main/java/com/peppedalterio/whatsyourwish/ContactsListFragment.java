@@ -39,6 +39,10 @@ public class ContactsListFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.contactslist_fragment, container, false);
 
+        /*
+        FIXME: CHECK PERMISSION LIKE MYWISHLISTFRAGMENT TO AVOID CRASH
+         */
+
         return view;
 
     }

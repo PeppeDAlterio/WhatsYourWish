@@ -18,6 +18,7 @@ public class MainActivity extends AppCompatActivity {
 
     // Identifier for the permission request
     private static final int READ_CONTACTS_PERMISSIONS_REQUEST = 1;
+    private static final int READ_PHONE_STATE_PERMISSIONS_REQUEST = 1;
 
         @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
@@ -25,8 +26,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //TODO: Check permessi solo per versione >= x
+        /*
+            TODO: Pulisci codice
+            FIXME: crash se non ho il permesso
+         */
         getPermissionToReadUserContacts();
+        getPermissionToReadPhoneState();
 
         ViewPager viewPager = findViewById(R.id.container);
         setupViewPage(viewPager);
@@ -76,8 +81,27 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    public void getPermissionToReadPhoneState() {
+        //READ_PHONE_STATE
+
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            if(shouldShowRequestPermissionRationale(Manifest.permission.READ_PHONE_STATE)) {
+
+            }
+
+            requestPermissions(new String[]{Manifest.permission.READ_PHONE_STATE},
+                    READ_PHONE_STATE_PERMISSIONS_REQUEST);
+
+        }
+
+    }
+
+
     // Callback with the request from calling requestPermissions(...)
-    @Override
+    /*@Override
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String permissions[],
                                            @NonNull int[] grantResults) {
@@ -93,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
-    }
+    }*/
 
 
 
