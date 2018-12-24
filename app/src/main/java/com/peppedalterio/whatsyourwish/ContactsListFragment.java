@@ -7,6 +7,7 @@ import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ContactsListFragment extends Fragment {
+
+    private static final String SEPARATOR_TOKEN = "\r\n";
 
     private static final String PROJECTION[] = {
             ContactsContract.CommonDataKinds.Phone._ID,
@@ -63,7 +66,7 @@ public class ContactsListFragment extends Fragment {
         {
             String name = contactList.getString(contactList.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
             String phoneNumber = contactList.getString(contactList.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-            listItems.add(phoneNumber + " | " + name);
+            listItems.add(name + SEPARATOR_TOKEN + phoneNumber);
             numbersList.add(new Contact(name, phoneNumber));
         }
         contactList.close();

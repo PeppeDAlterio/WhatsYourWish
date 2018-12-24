@@ -1,6 +1,8 @@
 package com.peppedalterio.whatsyourwish;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -8,30 +10,25 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.RecyclerView;
+import android.support.v7.app.AlertDialog;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.Manifest;
-import android.widget.Adapter;
 import android.widget.ArrayAdapter;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.*;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 public class MyWishlistFragment extends Fragment {
 
-    private static final String SEPARATOR_TOKEN = " --- ";
+    private static final String SEPARATOR_TOKEN = "\r\n";
 
     private FirebaseDatabase database;
     private DatabaseReference dbRef;
@@ -76,25 +73,18 @@ public class MyWishlistFragment extends Fragment {
         dbRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
                 Log.d("ADD", "added: " + dataSnapshot.getValue());
+//fixme: stringhe costanti
 
                 String str = "";
-                Iterator<DataSnapshot> iterator = dataSnapshot.getChildren().iterator();
 
-                Log.d("numero figli", "figli: "+dataSnapshot.getChildrenCount());
+                String title = dataSnapshot.child("TITOLO").getValue(String.class);
+                String description = dataSnapshot.child("DESCRIZIONE").getValue(String.class);
+                str += title + SEPARATOR_TOKEN + description;
 
-                if(dataSnapshot.getChildrenCount()==2) {
+                adapter.add(str);
 
-                    str += iterator.next().getValue().toString() + SEPARATOR_TOKEN +
-                            iterator.next().getValue().toString();
-
-                    Log.d("PARSER_DB", "leggo=" + str);
-
-                    adapter.add(str);
-
-                    }
-                    
-                //adapter.add(dataSnapshot.getValue().toString());
             }
 
             @Override
@@ -104,7 +94,13 @@ public class MyWishlistFragment extends Fragment {
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                Log.d("REMOVE", "removed");
+                Log.d("REMOVE", "removed"+dataSnapshot.child("TITOLO").getValue(String.class));
+
+                String str = dataSnapshot.child("TITOLO").getValue(String.class) + SEPARATOR_TOKEN +
+                        dataSnapshot.child("DESCRIZIONE").getValue(String.class);
+
+                adapter.remove(str);
+
             }
 
             @Override
@@ -120,25 +116,97 @@ public class MyWishlistFragment extends Fragment {
 
         FloatingActionButton actionButton = getActivity().findViewById(R.id.floatingActionButton);
         actionButton.setOnClickListener((l)->{
-            testMethod();
+            addAWish();
+        });
+
+        listView.setOnItemLongClickListener((parent, view, position, id) -> {
+            Log.d("DEBUG", "long_click:"+parent.getItemAtPosition(position).toString());
+            onItemLongClick(parent.getItemAtPosition(position).toString());
+            return true;
         });
 
     }
 
-    private void testMethod() {
+    private void onItemLongClick(String s) {
 
-        DatabaseReference myRef = database.getReference(simNumber);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Confirm dialog demo !");
+        builder.setMessage("You are about to delete all records of database. Do you really want to proceed ?");
+        builder.setCancelable(false);
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
 
-        String nome1 = "PC Windows";
-        String nome2 = "Preferibilmente Dell_"+Math.random();
+                Query query = dbRef.orderByChild("TITOLO").equalTo(s.split(SEPARATOR_TOKEN)[0]);
 
-        myRef = myRef.push();
-        myRef.push().setValue(nome1);
-        myRef.push().setValue(nome2);
+                query.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        for (DataSnapshot ds: dataSnapshot.getChildren()) {
+                            ds.getRef().removeValue();
+                        }
+                    }
 
-        String str = nome1 + SEPARATOR_TOKEN + nome2;
-        adapter.add(str);
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Log.e("TAG", "onCancelled", databaseError.toException());
+                    }
+                });
 
+                Toast.makeText(getContext(), "Desiderio cancellato", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Toast.makeText(getContext(), "Cancellazione annullata", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        builder.show();
+
+    }
+
+    private void addAWish() {
+
+        //FIXME: stringhe non costanti
+
+        Intent myIntent = new Intent(getActivity(), AddItemActivity.class);
+        myIntent.putExtra("simNumber", simNumber);
+        this.startActivity(myIntent);
+
+        Log.d("FINISH", "finito u.u");
+
+/*
+        String title = "PC Windows"+Math.random();
+        String description = "Preferibilmente Dell_"+Math.random();
+
+        Query query = dbRef.orderByChild("TITOLO").equalTo(title);
+
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.getChildrenCount()>0) {
+                    Log.d("EXISTS", "esiste!!!");
+                } else {
+                    Log.d("NOT_EXISTS", "non esiste :)");
+
+                    Map<String, Object> tmpMap = new HashMap<>();
+                    tmpMap.put("TITOLO", title);
+                    tmpMap.put("DESCRIZIONE", description);
+
+                    DatabaseReference tmpRef = dbRef.push();
+                    tmpRef.updateChildren(tmpMap);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e("TAG", "onCancelled", databaseError.toException());
+            }
+        });
+*/
     }
 
 }
