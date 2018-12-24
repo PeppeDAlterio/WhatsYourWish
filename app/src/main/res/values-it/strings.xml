@@ -3,4 +3,17 @@
     <string name="app_name">WhatsYourWish</string>
     <string name="wishlisttitletab">Mia lista dei desideri</string>
     <string name="contactslisttitletab">Lista contatti</string>
+    <string name="add_wish_title">Titolo desiderio</string>
+    <string name="add_your_wish">Aggiungi un desiderio alla tua lista</string>
+    <string name="add_wish_description">Descrizione desiderio</string>
+    <string name="confirm_button">Conferma</string>
+    <string name="toast_wish_exists">Desiderio già presente nella tua wishlist!</string>
+    <string name="toast_add_wish_success">Desiderio aggiunto con successo</string>
+    <string name="toast_add_wish_error">Errore nel titolo o descrizione del desiderio</string>
+    <string name="dialog_confirm">Conferma operazione</string>
+    <string name="dialog_delete_wish">Stai per cancellare il desiderio dalla tua wishlist. Confermi l\'operazione?</string>
+    <string name="dialog_yes">Sì</string>
+    <string name="dialog_no">No</string>
+    <string name="remove_wish_ok">Desiderio cancellato dalla lista</string>
+    <string name="action_settings">Impostazioni</string>
 </resources>

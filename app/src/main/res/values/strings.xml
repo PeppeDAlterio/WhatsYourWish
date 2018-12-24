@@ -1,7 +1,18 @@
 <resources>
     <string name="app_name">WhatsYourWish</string>
     <string name="action_settings">Settings</string>
-    <string name="section_format">Hello World from section: %1$d</string>
     <string name="wishlisttitletab">My wishlist</string>
     <string name="contactslisttitletab">Contacts list</string>
+    <string name="add_wish_title">Wish title</string>
+    <string name="add_your_wish">Add a wish to your list</string>
+    <string name="add_wish_description">Wish description</string>
+    <string name="confirm_button">Confirm</string>
+    <string name="toast_wish_exists">Wish already exists in your list!</string>
+    <string name="toast_add_wish_success">Wish successfully added</string>
+    <string name="toast_add_wish_error">Error in wish title or description</string>
+    <string name="dialog_confirm">Confirm your choice</string>
+    <string name="dialog_delete_wish">You are about to delete selected wish from you list. Do you really want to proceed?</string>
+    <string name="dialog_yes">Yes</string>
+    <string name="dialog_no">No</string>
+    <string name="remove_wish_ok">Wish removed from your list</string>
 </resources>

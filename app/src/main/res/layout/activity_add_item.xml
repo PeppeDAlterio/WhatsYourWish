@@ -13,9 +13,8 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="344dp"
-        android:contentDescription="Nome prodotto"
         android:ems="10"
-        android:hint="Titolo"
+        android:hint="@string/add_wish_title"
         android:inputType="textPersonName"
         android:maxLength="20"
         android:singleLine="true"
@@ -28,7 +27,7 @@
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_marginStart="8dp"
-        android:text="Nome prodotto"
+        android:text="@string/add_wish_title"
         app:layout_constraintBottom_toTopOf="@+id/wishtitle"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -40,9 +39,8 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
-        android:contentDescription="Note aggiuntive"
         android:ems="10"
-        android:hint="Descrizione"
+        android:hint="@string/add_wish_description"
         android:inputType="textPersonName"
         android:maxLength="50"
         android:singleLine="true"
@@ -57,7 +55,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:text="Descrizione"
+        android:text="@string/add_wish_description"
         app:layout_constraintBottom_toTopOf="@+id/wishdescription"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -69,7 +67,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="100dp"
-        android:text="CONFERMA"
+        android:text="@string/confirm_button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -82,7 +80,7 @@
         android:layout_marginTop="34dp"
         android:layout_marginEnd="150dp"
         android:fontFamily="cursive"
-        android:text="Aggiungi alla lista desideri"
+        android:text="@string/add_your_wish"
         android:textAlignment="center"
         android:textAllCaps="false"
         android:textSize="24sp"

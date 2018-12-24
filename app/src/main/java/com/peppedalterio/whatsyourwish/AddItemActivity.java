@@ -15,6 +15,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.peppedalterio.whatsyourwish.pojo.Contact;
+import com.peppedalterio.whatsyourwish.pojo.WishStrings;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -39,7 +40,7 @@ public class AddItemActivity extends AppCompatActivity {
         Button btn = findViewById(R.id.addwishbutton);
         btn.setOnClickListener((l)->{
             if(!addItemClick())
-                Toast.makeText(getApplicationContext(), "Errore.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), getString(R.string.toast_add_wish_error), Toast.LENGTH_SHORT).show();
         });
 
     }
@@ -55,25 +56,25 @@ public class AddItemActivity extends AppCompatActivity {
 
         DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference(simNumber);
 
-        Query query = dbRef.orderByChild("TITOLO").equalTo(title);
+        Query query = dbRef.orderByChild(WishStrings.WISH_TITLE_KEY).equalTo(title);
 
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if(dataSnapshot.getChildrenCount()>0) {
                     Log.d("EXISTS", "esiste!!!");
-                    Toast.makeText(getApplicationContext(), "Desiderio gia' presente in lista.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), getString(R.string.toast_wish_exists), Toast.LENGTH_SHORT).show();
                 } else {
                     Log.d("NOT_EXISTS", "non esiste :)");
 
                     Map<String, Object> tmpMap = new HashMap<>();
-                    tmpMap.put("TITOLO", title);
-                    tmpMap.put("DESCRIZIONE", description);
+                    tmpMap.put(WishStrings.WISH_TITLE_KEY, title);
+                    tmpMap.put(WishStrings.WISH_DESCRIPTION_KEY, description);
 
                     DatabaseReference tmpRef = dbRef.push();
                     tmpRef.updateChildren(tmpMap);
 
-                    Toast.makeText(getApplicationContext(), "Desiderio aggiunto con successo", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), getString(R.string.toast_add_wish_success), Toast.LENGTH_SHORT).show();
                     finish();
 
                 }
@@ -91,11 +92,8 @@ public class AddItemActivity extends AppCompatActivity {
 
     private boolean validate(String title, String description) {
 
-        if(title.isEmpty() || description.isEmpty() || title.length()>20 || description.length()>50
-                || title.contains("\r\n") || description.contains("\r\n"))
-            return false;
-        else
-            return true;
+        return !title.isEmpty() && !description.isEmpty() && title.length() <= 20 && description.length() <= 50
+                && !title.contains("\r\n") && !description.contains("\r\n");
 
     }
 }

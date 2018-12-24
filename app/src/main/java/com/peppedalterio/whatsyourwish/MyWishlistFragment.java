@@ -22,13 +22,13 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.firebase.database.*;
+import com.peppedalterio.whatsyourwish.pojo.WishStrings;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class MyWishlistFragment extends Fragment {
 
-    private static final String SEPARATOR_TOKEN = "\r\n";
 
     private FirebaseDatabase database;
     private DatabaseReference dbRef;
@@ -39,9 +39,7 @@ public class MyWishlistFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.mywishlist_fragment, container, false);
-
-        return view;
+        return inflater.inflate(R.layout.mywishlist_fragment, container, false);
 
     }
 
@@ -79,9 +77,9 @@ public class MyWishlistFragment extends Fragment {
 
                 String str = "";
 
-                String title = dataSnapshot.child("TITOLO").getValue(String.class);
-                String description = dataSnapshot.child("DESCRIZIONE").getValue(String.class);
-                str += title + SEPARATOR_TOKEN + description;
+                String title = dataSnapshot.child(WishStrings.WISH_TITLE_KEY).getValue(String.class);
+                String description = dataSnapshot.child(WishStrings.WISH_DESCRIPTION_KEY).getValue(String.class);
+                str += title + WishStrings.SEPARATOR_TOKEN + description;
 
                 adapter.add(str);
 
@@ -94,10 +92,10 @@ public class MyWishlistFragment extends Fragment {
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                Log.d("REMOVE", "removed"+dataSnapshot.child("TITOLO").getValue(String.class));
+                Log.d("REMOVE", "removed"+dataSnapshot.child(WishStrings.WISH_TITLE_KEY).getValue(String.class));
 
-                String str = dataSnapshot.child("TITOLO").getValue(String.class) + SEPARATOR_TOKEN +
-                        dataSnapshot.child("DESCRIZIONE").getValue(String.class);
+                String str = dataSnapshot.child(WishStrings.WISH_TITLE_KEY).getValue(String.class) + WishStrings.SEPARATOR_TOKEN +
+                        dataSnapshot.child(WishStrings.WISH_DESCRIPTION_KEY).getValue(String.class);
 
                 adapter.remove(str);
 
@@ -115,7 +113,7 @@ public class MyWishlistFragment extends Fragment {
         });
 
         FloatingActionButton actionButton = getActivity().findViewById(R.id.floatingActionButton);
-        actionButton.setOnClickListener((l)->{
+        actionButton.setOnClickListener((View v) -> {
             addAWish();
         });
 
@@ -130,14 +128,12 @@ public class MyWishlistFragment extends Fragment {
     private void onItemLongClick(String s) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle("Confirm dialog demo !");
-        builder.setMessage("You are about to delete all records of database. Do you really want to proceed ?");
+        builder.setTitle(getString(R.string.dialog_confirm));
+        builder.setMessage(getString(R.string.dialog_delete_wish));
         builder.setCancelable(false);
-        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
 
-                Query query = dbRef.orderByChild("TITOLO").equalTo(s.split(SEPARATOR_TOKEN)[0]);
+        builder.setPositiveButton(getString(R.string.dialog_yes), (DialogInterface dialog, int which) -> {
+                Query query = dbRef.orderByChild(WishStrings.WISH_TITLE_KEY).equalTo(s.split(WishStrings.SEPARATOR_TOKEN)[0]);
 
                 query.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -153,15 +149,12 @@ public class MyWishlistFragment extends Fragment {
                     }
                 });
 
-                Toast.makeText(getContext(), "Desiderio cancellato", Toast.LENGTH_SHORT).show();
-            }
+                Toast.makeText(getContext(), getString(R.string.remove_wish_ok), Toast.LENGTH_SHORT).show();
+
         });
 
-        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                Toast.makeText(getContext(), "Cancellazione annullata", Toast.LENGTH_SHORT).show();
-            }
+        builder.setNegativeButton(getString(R.string.dialog_no), (DialogInterface dialog, int which) -> {
+            //
         });
 
         builder.show();
