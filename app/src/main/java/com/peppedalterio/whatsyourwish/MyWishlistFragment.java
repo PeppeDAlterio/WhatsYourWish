@@ -21,21 +21,22 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.database.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 public class MyWishlistFragment extends Fragment {
+
+    private static final String SEPARATOR_TOKEN = " --- ";
 
     private FirebaseDatabase database;
     private DatabaseReference dbRef;
     private String simNumber;
+    private ArrayAdapter<String> adapter;
 
     @Nullable
     @Override
@@ -52,7 +53,7 @@ public class MyWishlistFragment extends Fragment {
 
         ListView listView = getActivity().findViewById(R.id.mywishlistrv);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1);
+        adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1);
 
         listView.setAdapter(adapter);
 
@@ -76,7 +77,24 @@ public class MyWishlistFragment extends Fragment {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 Log.d("ADD", "added: " + dataSnapshot.getValue());
-                adapter.add(dataSnapshot.getValue().toString());
+
+                String str = "";
+                Iterator<DataSnapshot> iterator = dataSnapshot.getChildren().iterator();
+
+                Log.d("numero figli", "figli: "+dataSnapshot.getChildrenCount());
+
+                if(dataSnapshot.getChildrenCount()==2) {
+
+                    str += iterator.next().getValue().toString() + SEPARATOR_TOKEN +
+                            iterator.next().getValue().toString();
+
+                    Log.d("PARSER_DB", "leggo=" + str);
+
+                    adapter.add(str);
+
+                    }
+                    
+                //adapter.add(dataSnapshot.getValue().toString());
             }
 
             @Override
@@ -108,9 +126,19 @@ public class MyWishlistFragment extends Fragment {
     }
 
     private void testMethod() {
-        // Write a message to the database
+
         DatabaseReference myRef = database.getReference(simNumber);
-        myRef.push().setValue("PC_CON_"+Math.random());
+
+        String nome1 = "PC Windows";
+        String nome2 = "Preferibilmente Dell_"+Math.random();
+
+        myRef = myRef.push();
+        myRef.push().setValue(nome1);
+        myRef.push().setValue(nome2);
+
+        String str = nome1 + SEPARATOR_TOKEN + nome2;
+        adapter.add(str);
+
     }
 
 }
