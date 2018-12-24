@@ -170,43 +170,11 @@ public class MyWishlistFragment extends Fragment {
 
     private void addAWish() {
 
-        //FIXME: stringhe non costanti
-
         Intent myIntent = new Intent(getActivity(), AddItemActivity.class);
         myIntent.putExtra("simNumber", simNumber);
         this.startActivity(myIntent);
 
         Log.d("FINISH", "finito u.u");
-
-/*
-        String title = "PC Windows"+Math.random();
-        String description = "Preferibilmente Dell_"+Math.random();
-
-        Query query = dbRef.orderByChild("TITOLO").equalTo(title);
-
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if(dataSnapshot.getChildrenCount()>0) {
-                    Log.d("EXISTS", "esiste!!!");
-                } else {
-                    Log.d("NOT_EXISTS", "non esiste :)");
-
-                    Map<String, Object> tmpMap = new HashMap<>();
-                    tmpMap.put("TITOLO", title);
-                    tmpMap.put("DESCRIZIONE", description);
-
-                    DatabaseReference tmpRef = dbRef.push();
-                    tmpRef.updateChildren(tmpMap);
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.e("TAG", "onCancelled", databaseError.toException());
-            }
-        });
-*/
     }
 
 }
