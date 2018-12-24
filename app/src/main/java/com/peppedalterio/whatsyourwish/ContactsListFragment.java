@@ -71,7 +71,6 @@ public class ContactsListFragment extends Fragment {
             //String selectedItem = (String) parent.getItemAtPosition(position);
             Log.i("CLICK","Phone number: " + numbersList.get(position).getPhoneNumber());
             mostraListaUtente(numbersList.get(position));
-            //swapFragment();
         });
 
     }
@@ -81,16 +80,5 @@ public class ContactsListFragment extends Fragment {
         myIntent.putExtra("contact", contact);
         this.startActivity(myIntent);
     }
-
-    private void swapFragment(){
-
-/*        Fragment newFragment = new MyWishlistFragment();
-        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.tabs, newFragment);
-        fragmentTransaction.addToBackStack(null);
-        fragmentTransaction.commit();
-        */
-    }
-
 
 }

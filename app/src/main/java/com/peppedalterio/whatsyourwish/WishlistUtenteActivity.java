@@ -17,12 +17,15 @@ public class WishlistUtenteActivity extends AppCompatActivity {
         Contact contact;
 
         Intent intent = getIntent();
-        
-        if(intent.getSerializableExtra("contact") != null && intent.getSerializableExtra("contact") instanceof  Contact)
+
+        if(intent.getSerializableExtra("contact") != null && intent.getSerializableExtra("contact") instanceof  Contact) {
+
             contact = (Contact) intent.getSerializableExtra("contact");
 
-        Log.i("EXTRA", "NAME="+contact.getName());
-        Log.i("EXTRA", "NUMBER="+contact.getPhoneNumber());
+            Log.i("EXTRA", "NAME="+contact.getName());
+            Log.i("EXTRA", "NUMBER="+contact.getPhoneNumber());
+
+        }
 
     }
 
