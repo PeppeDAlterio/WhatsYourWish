@@ -12,8 +12,6 @@ import android.widget.Toast;
 
 public class MyWishlistFragment extends Fragment {
 
-    private static final String TAG = "WishListFragment";
-
     //private Button bttst;
 
     @Nullable

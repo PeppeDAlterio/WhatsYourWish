@@ -19,13 +19,7 @@ public class MainActivity extends AppCompatActivity {
     // Identifier for the permission request
     private static final int READ_CONTACTS_PERMISSIONS_REQUEST = 1;
 
-    private static final String TAG = "MainActivity";
-
-    private SectionsPageAdapter sectionsPageAdapter;
-
-    private ViewPager viewPager;
-
-    @RequiresApi(api = Build.VERSION_CODES.M)
+        @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,14 +28,10 @@ public class MainActivity extends AppCompatActivity {
         //TODO: Check permessi solo per versione >= x
         getPermissionToReadUserContacts();
 
-        Log.d(TAG, "onCreate: Starting...");
-
-        sectionsPageAdapter = new SectionsPageAdapter(getSupportFragmentManager());
-
-        viewPager = (ViewPager) findViewById(R.id.container);
+        ViewPager viewPager = findViewById(R.id.container);
         setupViewPage(viewPager);
 
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        TabLayout tabLayout = findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
 
     }
