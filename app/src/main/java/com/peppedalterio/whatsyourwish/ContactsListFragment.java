@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
 
 import com.peppedalterio.whatsyourwish.pojo.Contact;
 
@@ -30,10 +29,7 @@ public class ContactsListFragment extends Fragment {
     private static final String SELECTION =
             ContactsContract.CommonDataKinds.Phone.NUMBER + " IS NOT NULL";
 
-    private List<Contact> listaContatti = new ArrayList<>();
-
-    private SimpleCursorAdapter m;
-
+    private List<Contact> numbersList = new ArrayList<>();
 
 
     @Nullable
@@ -46,41 +42,33 @@ public class ContactsListFragment extends Fragment {
 
     }
 
-    /*
-     * Defines an array that contains resource ids for the layout views
-     * that get the Cursor column contents. The id is pre-defined in
-     * the Android framework, so it is prefaced with "android.R.id"
-     */
-    private final static int[] TO_IDS = {
-            android.R.id.text1,
-            android.R.id.text2
-    };
 
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        ListView listaContattiView = (ListView) getActivity().findViewById(R.id.contactlistview);
+        ListView contactsListView = (ListView) getActivity().findViewById(R.id.contactlistview);
 
-        Cursor cntList = getActivity().getContentResolver().query(
+        Cursor contactList = getActivity().getContentResolver().query(
                 ContactsContract.CommonDataKinds.Phone.CONTENT_URI, PROJECTION, SELECTION,null, null);
 
         ArrayAdapter<String> adapter;
         ArrayList<String> listItems = new ArrayList<String>();
 
-        while (cntList.moveToNext())
+        while (contactList.moveToNext())
         {
-            String name = cntList.getString(cntList.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
-            String phoneNumber = cntList.getString(cntList.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+            String name = contactList.getString(contactList.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+            String phoneNumber = contactList.getString(contactList.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
             listItems.add(phoneNumber + " | " + name);
+            numbersList.add(new Contact(name, phoneNumber));
         }
-        cntList.close();
+        contactList.close();
 
         adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, listItems);
 
-        listaContattiView.setAdapter(adapter);
-        listaContattiView.setOnItemClickListener((parent, view, position, id) -> {
-            String selectedItem = (String) parent.getItemAtPosition(position);
-            Log.d("CLICK", "clicked: "+selectedItem);
+        contactsListView.setAdapter(adapter);
+        contactsListView.setOnItemClickListener((parent, view, position, id) -> {
+            //String selectedItem = (String) parent.getItemAtPosition(position);
+            Log.i("CLICK","Phone number: " + numbersList.get(position).getPhoneNumber());
         });
 
     }

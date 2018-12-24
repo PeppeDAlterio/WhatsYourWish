@@ -14,18 +14,18 @@ public class MyWishlistFragment extends Fragment {
 
     private static final String TAG = "WishListFragment";
 
-    private Button bttst;
+    //private Button bttst;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.mywishlist_fragment, container, false);
-        bttst = (Button) view.findViewById(R.id.btnTEST2);
+        /*bttst = (Button) view.findViewById(R.id.btnTEST2);
 
         bttst.setOnClickListener( (View) -> {
             Toast.makeText(getActivity(), "WISH BTN1", Toast.LENGTH_SHORT).show();
-        } );
+        } );*/
 
         return view;
 
