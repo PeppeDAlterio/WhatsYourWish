@@ -15,4 +15,6 @@
     <string name="dialog_yes">Yes</string>
     <string name="dialog_no">No</string>
     <string name="remove_wish_ok">Wish removed from your list</string>
+    <string name="user_not_found">Selected user seems not to have a wishlist at the moment</string>
+    <string name="wishlist_message">Wishlist of the user</string>
 </resources>

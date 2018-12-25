@@ -16,4 +16,6 @@
     <string name="dialog_no">No</string>
     <string name="remove_wish_ok">Desiderio cancellato dalla lista</string>
     <string name="action_settings">Impostazioni</string>
+    <string name="user_not_found">Spiacenti, l\'utente selezionato non ha una wishlist</string>
+    <string name="wishlist_message">Wishlist dell\'utente</string>
 </resources>

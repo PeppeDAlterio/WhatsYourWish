@@ -1,13 +1,33 @@
 package com.peppedalterio.whatsyourwish;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.peppedalterio.whatsyourwish.pojo.Contact;
+import com.peppedalterio.whatsyourwish.pojo.WishStrings;
 
 public class WishlistUtenteActivity extends AppCompatActivity {
+
+    private String effectiveDbNumber;
+
+    private FirebaseDatabase database;
+
+    private ArrayAdapter<String> adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,14 +38,98 @@ public class WishlistUtenteActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
 
-        if(intent.getSerializableExtra("contact") != null && intent.getSerializableExtra("contact") instanceof  Contact) {
+        if(intent.getSerializableExtra("contact") == null ||
+                !(intent.getSerializableExtra("contact") instanceof  Contact))
+            finish();
 
-            contact = (Contact) intent.getSerializableExtra("contact");
+        contact = (Contact) intent.getSerializableExtra("contact");
 
-            Log.i("EXTRA", "NAME=" + contact.getName());
-            Log.i("EXTRA", "NUMBER=" + contact.getPhoneNumber());
+        Log.i("EXTRA", "NAME=" + contact.getName());
+        Log.i("EXTRA", "NUMBER=" + contact.getPhoneNumber());
 
-        }
+        ListView listView = findViewById(R.id.userwishlist);
+        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
+        listView.setAdapter(adapter);
+
+        database = FirebaseDatabase.getInstance();
+        DatabaseReference dbRef = database.getReference();
+        Query query = dbRef.endAt(contact.getPhoneNumber()).limitToFirst(1);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                DataSnapshot ds = dataSnapshot.getChildren().iterator().next();
+
+                if(ds.getKey()!= null && ds.getKey().endsWith(contact.getPhoneNumber())) {
+                    effectiveDbNumber = ds.getKey();
+                    ((TextView)findViewById(R.id.userwishlistnumber)).setText(effectiveDbNumber);
+                    loadWishList();
+                } else {
+                    Toast.makeText(getApplicationContext(), getString(R.string.user_not_found), Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e("TAG", "onCancelled", databaseError.toException());
+            }
+        });
+
+
+
+
+
+    }
+
+    private void loadWishList() {
+
+        DatabaseReference dbRef = database.getReference(effectiveDbNumber);
+
+        dbRef.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                Log.d("ADD", "added: " + dataSnapshot.getValue());
+
+                String str = "";
+
+                String title = dataSnapshot.child(WishStrings.WISH_TITLE_KEY).getValue(String.class);
+                String description = dataSnapshot.child(WishStrings.WISH_DESCRIPTION_KEY).getValue(String.class);
+                str += title + WishStrings.SEPARATOR_TOKEN + description;
+
+                adapter.add(str);
+
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                Log.d("CHANGE", "changed: " + dataSnapshot.getValue());
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+                Log.d("REMOVE", "removed"+dataSnapshot.child(WishStrings.WISH_TITLE_KEY).getValue(String.class));
+
+                String str = dataSnapshot.child(WishStrings.WISH_TITLE_KEY).getValue(String.class) + WishStrings.SEPARATOR_TOKEN +
+                        dataSnapshot.child(WishStrings.WISH_DESCRIPTION_KEY).getValue(String.class);
+
+                adapter.remove(str);
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                Log.d("CHANGE", "changed: " + dataSnapshot.getValue());
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
     }
 

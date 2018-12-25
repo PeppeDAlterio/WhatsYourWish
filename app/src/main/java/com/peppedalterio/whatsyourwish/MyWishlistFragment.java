@@ -47,9 +47,7 @@ public class MyWishlistFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         ListView listView = getActivity().findViewById(R.id.mywishlistrv);
-
         adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1);
-
         listView.setAdapter(adapter);
 
         TelephonyManager telemamanger = (TelephonyManager) getActivity().getSystemService(Context.TELEPHONY_SERVICE);
@@ -73,7 +71,6 @@ public class MyWishlistFragment extends Fragment {
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
                 Log.d("ADD", "added: " + dataSnapshot.getValue());
-//fixme: stringhe costanti
 
                 String str = "";
 
@@ -167,7 +164,6 @@ public class MyWishlistFragment extends Fragment {
         myIntent.putExtra("simNumber", simNumber);
         this.startActivity(myIntent);
 
-        Log.d("FINISH", "finito u.u");
     }
 
 }
