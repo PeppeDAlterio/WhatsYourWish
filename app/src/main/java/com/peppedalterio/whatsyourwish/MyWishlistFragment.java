@@ -40,7 +40,7 @@ public class MyWishlistFragment extends Fragment {
 
     }
 
-    @SuppressLint("HardwareIds")
+
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
