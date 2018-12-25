@@ -29,12 +29,14 @@ public class WishlistUtenteActivity extends AppCompatActivity {
 
     private ArrayAdapter<String> adapter;
 
+    private Contact contact;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wishlist_utente);
 
-        Contact contact;
+
 
         Intent intent = getIntent();
 
@@ -53,23 +55,33 @@ public class WishlistUtenteActivity extends AppCompatActivity {
 
         database = FirebaseDatabase.getInstance();
         DatabaseReference dbRef = database.getReference();
-        Query query = dbRef.endAt(contact.getPhoneNumber()).limitToFirst(1);
+        Query query = dbRef.orderByKey();
+
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                DataSnapshot ds = dataSnapshot.getChildren().iterator().next();
+                boolean found = false;
 
-                if(ds.getKey()!= null && ds.getKey().endsWith(contact.getPhoneNumber())) {
-                    effectiveDbNumber = ds.getKey();
-                    ((TextView)findViewById(R.id.userwishlistnumber)).setText(effectiveDbNumber);
-                    loadWishList();
-                } else {
-                    Toast.makeText(getApplicationContext(), getString(R.string.user_not_found), Toast.LENGTH_SHORT).show();
-                    finish();
+                for(DataSnapshot ds : dataSnapshot.getChildren()) {
+
+                    if(ds.getKey()!= null && ds.getKey().endsWith(contact.getPhoneNumber()) ) {
+                        effectiveDbNumber = ds.getKey();
+                        ((TextView)findViewById(R.id.userwishlistnumber)).setText(effectiveDbNumber);
+                        found = true;
+                        break;
+                    }
+
                 }
 
-
+                if(found) {
+                    loadWishList();
+                } else {
+                    Toast.makeText(getApplicationContext(), getString(R.string.user_not_found),
+                            Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+                
             }
 
             @Override
