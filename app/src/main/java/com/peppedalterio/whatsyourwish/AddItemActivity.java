@@ -90,7 +90,7 @@ public class AddItemActivity extends AppCompatActivity {
 
     }
 
-    private boolean validate(String title, String description) {
+    protected boolean validate(String title, String description) {
 
         return !title.isEmpty() && !description.isEmpty() && title.length() <= 20 && description.length() <= 50
                 && !title.contains("\r\n") && !description.contains("\r\n");

@@ -24,8 +24,6 @@ import android.widget.Toast;
 import com.google.firebase.database.*;
 import com.peppedalterio.whatsyourwish.pojo.WishStrings;
 
-import java.util.HashMap;
-import java.util.Map;
 
 public class MyWishlistFragment extends Fragment {
 
