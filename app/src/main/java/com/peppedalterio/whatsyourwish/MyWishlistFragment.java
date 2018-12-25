@@ -1,5 +1,6 @@
 package com.peppedalterio.whatsyourwish;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -39,6 +40,7 @@ public class MyWishlistFragment extends Fragment {
 
     }
 
+    @SuppressLint("HardwareIds")
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
