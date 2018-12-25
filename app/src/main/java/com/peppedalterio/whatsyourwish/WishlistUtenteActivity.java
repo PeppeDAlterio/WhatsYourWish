@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.telephony.PhoneNumberUtils;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -35,7 +36,7 @@ public class WishlistUtenteActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wishlist_utente);
-        
+
         Intent intent = getIntent();
 
         if(intent.getSerializableExtra("contact") == null ||
@@ -63,7 +64,10 @@ public class WishlistUtenteActivity extends AppCompatActivity {
 
                 for(DataSnapshot ds : dataSnapshot.getChildren()) {
 
-                    if(ds.getKey()!= null && ds.getKey().endsWith(contact.getPhoneNumber()) ) {
+                    Log.d("TOCMP", "num="+contact.getPhoneNumber());
+                    Log.d("DB_READ", "num="+ds.getKey());
+
+                    if(ds.getKey() != null && PhoneNumberUtils.compare(ds.getKey(), contact.getPhoneNumber())) {
                         effectiveDbNumber = ds.getKey();
                         ((TextView)findViewById(R.id.userwishlistnumber)).setText(effectiveDbNumber);
                         found = true;

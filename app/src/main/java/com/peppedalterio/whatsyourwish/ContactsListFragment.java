@@ -21,14 +21,13 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 
 import com.peppedalterio.whatsyourwish.pojo.Contact;
+import com.peppedalterio.whatsyourwish.pojo.WishStrings;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ContactsListFragment extends Fragment {
-
-    private static final String SEPARATOR_TOKEN = "\r\n";
-
+    
     private static final String PROJECTION[] = {
             ContactsContract.CommonDataKinds.Phone._ID,
             ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
@@ -37,9 +36,6 @@ public class ContactsListFragment extends Fragment {
 
     private static final String SELECTION =
             ContactsContract.CommonDataKinds.Phone.NUMBER + " IS NOT NULL";
-
-    private List<Contact> numbersList = new ArrayList<>();
-
 
     @Nullable
     @Override
@@ -63,6 +59,7 @@ public class ContactsListFragment extends Fragment {
                 ContactsContract.CommonDataKinds.Phone.CONTENT_URI, PROJECTION, SELECTION,null, null);
 
         ArrayAdapter<String> adapter;
+        List<Contact> numbersList = new ArrayList<>();
         ArrayList<String> listItems = new ArrayList<>();
 
         if(contactList == null) return;
@@ -71,7 +68,7 @@ public class ContactsListFragment extends Fragment {
         {
             String name = contactList.getString(contactList.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
             String phoneNumber = contactList.getString(contactList.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-            listItems.add(name + SEPARATOR_TOKEN + phoneNumber);
+            listItems.add(name + WishStrings.SEPARATOR_TOKEN + phoneNumber);
             numbersList.add(new Contact(name, phoneNumber));
         }
         contactList.close();
@@ -80,9 +77,11 @@ public class ContactsListFragment extends Fragment {
 
         contactsListView.setAdapter(adapter);
         contactsListView.setOnItemClickListener((parent, view, position, id) -> {
-            //String selectedItem = (String) parent.getItemAtPosition(position);
-            Log.i("CLICK","Phone number: " + numbersList.get(position).getPhoneNumber());
-            mostraListaUtente(numbersList.get(position));
+            String selectedItem = (String) parent.getItemAtPosition(position);
+
+            Log.d("CLICK", "Phone number: " + selectedItem.split(WishStrings.SEPARATOR_TOKEN)[1]);
+            mostraListaUtente(new Contact(selectedItem.split(WishStrings.SEPARATOR_TOKEN)[0],
+                    selectedItem.split(WishStrings.SEPARATOR_TOKEN)[1]));
         });
 
         searchBar.addTextChangedListener(new TextWatcher() {
