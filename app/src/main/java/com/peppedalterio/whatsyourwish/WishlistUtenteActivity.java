@@ -35,9 +35,7 @@ public class WishlistUtenteActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wishlist_utente);
-
-
-
+        
         Intent intent = getIntent();
 
         if(intent.getSerializableExtra("contact") == null ||
@@ -45,10 +43,10 @@ public class WishlistUtenteActivity extends AppCompatActivity {
             finish();
 
         contact = (Contact) intent.getSerializableExtra("contact");
-
+/*
         Log.i("EXTRA", "NAME=" + contact.getName());
         Log.i("EXTRA", "NUMBER=" + contact.getPhoneNumber());
-
+*/
         ListView listView = findViewById(R.id.userwishlist);
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
         listView.setAdapter(adapter);
@@ -81,7 +79,7 @@ public class WishlistUtenteActivity extends AppCompatActivity {
                             Toast.LENGTH_SHORT).show();
                     finish();
                 }
-                
+
             }
 
             @Override
