@@ -27,8 +27,6 @@ import com.peppedalterio.whatsyourwish.pojo.WishStrings;
 
 public class MyWishlistFragment extends Fragment {
 
-
-    private FirebaseDatabase database;
     private DatabaseReference dbRef;
     private String simNumber;
     private ArrayAdapter<String> adapter;
@@ -44,24 +42,24 @@ public class MyWishlistFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        if(getActivity()==null) return;
+
         ListView listView = getActivity().findViewById(R.id.mywishlistrv);
+
         adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1);
         listView.setAdapter(adapter);
 
         TelephonyManager telemamanger = (TelephonyManager) getActivity().getSystemService(Context.TELEPHONY_SERVICE);
 
-        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_PHONE_NUMBERS) != PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-            // FIXME: AVVISO NO PERMESSIONS
-            Log.e("NO_PERMISSION", "No READ_PHONE_STATE");
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+            getActivity().finish();
         }
 
         simNumber = telemamanger.getLine1Number();
 
         Log.d("SIM_NUMBER", "num="+simNumber);
 
-        database = FirebaseDatabase.getInstance();
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
         dbRef = database.getReference(simNumber);
 
         dbRef.addChildEventListener(new ChildEventListener() {
@@ -108,14 +106,13 @@ public class MyWishlistFragment extends Fragment {
         });
 
         FloatingActionButton actionButton = getActivity().findViewById(R.id.floatingActionButton);
-        actionButton.setOnClickListener((View v) -> {
-            addAWish();
-        });
+        actionButton.setOnClickListener((View v) -> addAWish());
 
-        listView.setOnItemClickListener((parent, view, position, id) -> {
-            Toast.makeText(getContext(), getString(R.string.toast_long_press_to_delete_wish),
-                    Toast.LENGTH_SHORT).show();
-        });
+        listView.setOnItemClickListener(
+                (parent, view, position, id) ->
+                        Toast.makeText(getContext(), getString(R.string.toast_long_press_to_delete_wish),
+                                Toast.LENGTH_SHORT).show()
+        );
 
         listView.setOnItemLongClickListener((parent, view, position, id) -> {
             Log.d("DEBUG", "long_click:"+parent.getItemAtPosition(position).toString());
@@ -127,6 +124,8 @@ public class MyWishlistFragment extends Fragment {
 
     private void onItemLongClick(String s) {
 
+        if(getContext()==null) return;
+
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle(getString(R.string.dialog_confirm));
         builder.setMessage(getString(R.string.dialog_delete_wish));
@@ -137,14 +136,14 @@ public class MyWishlistFragment extends Fragment {
 
                 query.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         for (DataSnapshot ds: dataSnapshot.getChildren()) {
                             ds.getRef().removeValue();
                         }
                     }
 
                     @Override
-                    public void onCancelled(DatabaseError databaseError) {
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
                         Log.e("TAG", "onCancelled", databaseError.toException());
                     }
                 });

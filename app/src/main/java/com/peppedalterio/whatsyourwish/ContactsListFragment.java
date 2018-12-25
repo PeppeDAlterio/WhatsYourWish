@@ -40,13 +40,8 @@ public class ContactsListFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.contactslist_fragment, container, false);
+        return inflater.inflate(R.layout.contactslist_fragment, container, false);
 
-        /*
-        FIXME: CHECK PERMISSION LIKE MYWISHLISTFRAGMENT TO AVOID CRASH
-         */
-
-        return view;
 
     }
 
@@ -54,13 +49,17 @@ public class ContactsListFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        ListView contactsListView = (ListView) getActivity().findViewById(R.id.contactlistview);
+        if(getActivity()==null) return;
+
+        ListView contactsListView = getActivity().findViewById(R.id.contactlistview);
 
         Cursor contactList = getActivity().getContentResolver().query(
                 ContactsContract.CommonDataKinds.Phone.CONTENT_URI, PROJECTION, SELECTION,null, null);
 
         ArrayAdapter<String> adapter;
-        ArrayList<String> listItems = new ArrayList<String>();
+        ArrayList<String> listItems = new ArrayList<>();
+
+        if(contactList == null) return;
 
         while (contactList.moveToNext())
         {
@@ -71,7 +70,7 @@ public class ContactsListFragment extends Fragment {
         }
         contactList.close();
 
-        adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, listItems);
+        adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, listItems);
 
         contactsListView.setAdapter(adapter);
         contactsListView.setOnItemClickListener((parent, view, position, id) -> {

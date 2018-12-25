@@ -19,9 +19,6 @@ public class MainActivity extends AppCompatActivity {
     // Identifier for the permission request
     private static final int APP_PERMISSIONS_REQUEST = 12345;
 
-    private ViewPager viewPager;
-    private TabLayout tabLayout;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,10 +31,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void continueWithPermissionsGranted() {
-        viewPager = findViewById(R.id.container);
+        ViewPager viewPager = findViewById(R.id.container);
         setupViewPage(viewPager);
 
-        tabLayout = findViewById(R.id.tabs);
+        TabLayout tabLayout = findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
     }
 
