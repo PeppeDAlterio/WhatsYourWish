@@ -11,16 +11,17 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
+        android:layout_marginTop="60dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="344dp"
         android:ems="10"
         android:hint="@string/add_wish_title"
-        android:inputType="textPersonName"
+        android:inputType="textCapSentences"
         android:maxLength="20"
         android:singleLine="true"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:textAllCaps="false"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView4" />
 
     <TextView
         android:id="@+id/textView2"
@@ -41,14 +42,14 @@
         android:layout_marginBottom="8dp"
         android:ems="10"
         android:hint="@string/add_wish_description"
-        android:inputType="textPersonName"
+        android:inputType="textCapSentences"
         android:maxLength="50"
         android:singleLine="true"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/addwishbutton"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.432" />
+        app:layout_constraintTop_toBottomOf="@+id/wishtitle" />
 
     <TextView
         android:id="@+id/textView3"
