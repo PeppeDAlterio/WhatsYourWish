@@ -7,12 +7,17 @@ import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
 import android.text.Html;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Adapter;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 
 import com.peppedalterio.whatsyourwish.pojo.Contact;
@@ -52,6 +57,7 @@ public class ContactsListFragment extends Fragment {
         if(getActivity()==null) return;
 
         ListView contactsListView = getActivity().findViewById(R.id.contactlistview);
+        EditText searchBar = getActivity().findViewById(R.id.contactssearchbar);
 
         Cursor contactList = getActivity().getContentResolver().query(
                 ContactsContract.CommonDataKinds.Phone.CONTENT_URI, PROJECTION, SELECTION,null, null);
@@ -77,6 +83,25 @@ public class ContactsListFragment extends Fragment {
             //String selectedItem = (String) parent.getItemAtPosition(position);
             Log.i("CLICK","Phone number: " + numbersList.get(position).getPhoneNumber());
             mostraListaUtente(numbersList.get(position));
+        });
+
+        searchBar.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                ArrayAdapter adp = (ArrayAdapter)((ListView)getActivity().findViewById(R.id.contactlistview)).getAdapter();
+
+                adp.getFilter().filter(charSequence);
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
         });
 
     }
