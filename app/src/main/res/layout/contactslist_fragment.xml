@@ -27,7 +27,7 @@
         android:drawableStart="@android:drawable/ic_menu_search"
         android:ems="10"
         android:hint="@string/searchbar"
-        android:inputType="textPersonName"
+        android:inputType="textCapSentences"
         android:singleLine="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
