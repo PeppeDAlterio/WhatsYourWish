@@ -18,4 +18,5 @@
     <string name="action_settings">Impostazioni</string>
     <string name="user_not_found">Spiacenti, l\'utente selezionato non ha una wishlist</string>
     <string name="wishlist_message">Wishlist dell\'utente</string>
+    <string name="toast_long_press_to_delete_wish">Tieni premuto il desiderio per eliminarlo dalla wishlist</string>
 </resources>

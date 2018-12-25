@@ -112,6 +112,11 @@ public class MyWishlistFragment extends Fragment {
             addAWish();
         });
 
+        listView.setOnItemClickListener((parent, view, position, id) -> {
+            Toast.makeText(getContext(), getString(R.string.toast_long_press_to_delete_wish),
+                    Toast.LENGTH_SHORT).show();
+        });
+
         listView.setOnItemLongClickListener((parent, view, position, id) -> {
             Log.d("DEBUG", "long_click:"+parent.getItemAtPosition(position).toString());
             onItemLongClick(parent.getItemAtPosition(position).toString());
