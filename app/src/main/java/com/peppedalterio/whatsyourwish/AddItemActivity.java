@@ -101,7 +101,7 @@ public class AddItemActivity extends AppCompatActivity {
      * This method check the validity of wish title and description.
      * <br>
      * Title is required, so can't be empty or contain only blank spaces. Title lenght must be
-     * lesser and equal to 20.
+     * lesser and equal to 40.
      * <br>
      * Description is optional and is trimmed if containing only blank spaces. Description length
      * mu be lesser and equal to 50.
@@ -118,7 +118,7 @@ public class AddItemActivity extends AppCompatActivity {
             description="";
 
         return  !title.isEmpty() &&
-                title.length() <= 20 &&
+                title.length() <= 40 &&
                 description.length() <= 50 &&
                 !title.contains("\r\n") &&
                 !description.contains("\r\n") &&
