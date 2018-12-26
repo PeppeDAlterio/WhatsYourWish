@@ -5,7 +5,7 @@
     <string name="contactslisttitletab">Contacts list</string>
     <string name="add_wish_title">Wish title</string>
     <string name="add_your_wish">Add a wish to your list</string>
-    <string name="add_wish_description">Wish description</string>
+    <string name="add_wish_description">Wish description (optional)</string>
     <string name="confirm_button">Confirm</string>
     <string name="toast_wish_exists">Wish already exists in your list!</string>
     <string name="toast_add_wish_success">Wish successfully added</string>
@@ -15,7 +15,7 @@
     <string name="dialog_yes">Yes</string>
     <string name="dialog_no">No</string>
     <string name="remove_wish_ok">Wish removed from your list</string>
-    <string name="user_not_found">Selected user seems not to have a wishlist at the moment</string>
+    <string name="toast_user_not_found">Selected user seems not to have a wishlist at the moment</string>
     <string name="wishlist_message">Wishlist of the user</string>
     <string name="toast_long_press_to_delete_wish">Long press the wish to delete it</string>
     <string name="searchbar">Search&#8230;</string>

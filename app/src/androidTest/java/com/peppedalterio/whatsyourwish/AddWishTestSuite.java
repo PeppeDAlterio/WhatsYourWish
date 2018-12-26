@@ -49,7 +49,8 @@ import static org.hamcrest.Matchers.not;
 @RunWith(AndroidJUnit4.class)
 public class AddWishTestSuite {
 
-    private static final String TITOLO_E_DESCRIZIONE_TEST_WISH = "TitoloTest\r\nDescrizione prova";
+    private final String TITOLO_E_DESCRIZIONE_TEST_WISH = "TitoloTest\r\nDescrizione prova";
+    private final String TITOLO_E_DESCRIZIONE_TEST_WISH_ERROR = "\r\n\r\nDescrizione prova\r\n";
 
     @Rule
     public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class);
@@ -61,7 +62,19 @@ public class AddWishTestSuite {
                     "android.permission.READ_PHONE_STATE");
 
     @Test
-    public void addWishThatAlreadyExists() {
+    public void addAWishWithWrongData() {
+
+        swipeToMyWishlist();
+
+        addAWish(TITOLO_E_DESCRIZIONE_TEST_WISH_ERROR);
+
+        onView(withText(R.string.toast_add_wish_error)).inRoot(new ToastMatcher())
+                .check(matches(isDisplayed()));
+
+    }
+
+    @Test
+    public void addAWishThatAlreadyExistsTest() {
 
         swipeToMyWishlist();
 
@@ -87,7 +100,7 @@ public class AddWishTestSuite {
     }
 
     @Test
-    public void addWishTestAddAndDelete() {
+    public void addndDeleteWishTest() {
 
         // Added a sleep statement to match the app's execution delay.
         // The recommended way to handle such scenarios is to use Espresso idling resources:
@@ -103,6 +116,9 @@ public class AddWishTestSuite {
         onView(withText(TITOLO_E_DESCRIZIONE_TEST_WISH)).check(doesNotExist());
 
         addAWish(TITOLO_E_DESCRIZIONE_TEST_WISH);
+
+        onView(withText(R.string.toast_add_wish_success)).inRoot(new ToastMatcher())
+                .check(matches(isDisplayed()));
 
 
         // Added a sleep statement to match the app's execution delay.

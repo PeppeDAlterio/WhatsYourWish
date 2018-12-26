@@ -1,6 +1,7 @@
 package com.peppedalterio.whatsyourwish;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -60,7 +61,7 @@ public class AddItemActivity extends AppCompatActivity {
 
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.getChildrenCount()>0) {
                     Log.d("EXISTS", "esiste!!!");
                     Toast.makeText(getApplicationContext(), getString(R.string.toast_wish_exists), Toast.LENGTH_SHORT).show();
@@ -81,7 +82,7 @@ public class AddItemActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onCancelled(@NonNull DatabaseError databaseError) {
                 Log.e("TAG", "onCancelled", databaseError.toException());
             }
         });
@@ -92,8 +93,15 @@ public class AddItemActivity extends AppCompatActivity {
 
     protected boolean validate(String title, String description) {
 
-        return !title.isEmpty() && !description.isEmpty() && title.length() <= 20 && description.length() <= 50
-                && !title.contains("\r\n") && !description.contains("\r\n");
+        if (description.trim().isEmpty())
+            description="";
+
+        return  !title.isEmpty() &&
+                title.length() <= 20 &&
+                description.length() <= 50 &&
+                !title.contains("\r\n") &&
+                !description.contains("\r\n") &&
+                !(title.trim().isEmpty());
 
     }
 }

@@ -44,10 +44,7 @@ public class WishlistUtenteActivity extends AppCompatActivity {
             finish();
 
         contact = (Contact) intent.getSerializableExtra("contact");
-/*
-        Log.i("EXTRA", "NAME=" + contact.getName());
-        Log.i("EXTRA", "NUMBER=" + contact.getPhoneNumber());
-*/
+
         ListView listView = findViewById(R.id.userwishlist);
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
         listView.setAdapter(adapter);
@@ -58,14 +55,11 @@ public class WishlistUtenteActivity extends AppCompatActivity {
 
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                 boolean found = false;
 
                 for(DataSnapshot ds : dataSnapshot.getChildren()) {
-
-                    Log.d("TOCMP", "num="+contact.getPhoneNumber());
-                    Log.d("DB_READ", "num="+ds.getKey());
 
                     if(ds.getKey() != null && PhoneNumberUtils.compare(ds.getKey(), contact.getPhoneNumber())) {
                         effectiveDbNumber = ds.getKey();
@@ -79,7 +73,7 @@ public class WishlistUtenteActivity extends AppCompatActivity {
                 if(found) {
                     loadWishList();
                 } else {
-                    Toast.makeText(getApplicationContext(), getString(R.string.user_not_found),
+                    Toast.makeText(getApplicationContext(), getString(R.string.toast_user_not_found),
                             Toast.LENGTH_SHORT).show();
                     finish();
                 }
@@ -87,7 +81,7 @@ public class WishlistUtenteActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onCancelled(@NonNull DatabaseError databaseError) {
                 Log.e("TAG", "onCancelled", databaseError.toException());
             }
         });

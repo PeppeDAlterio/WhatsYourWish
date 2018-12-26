@@ -4,164 +4,181 @@ import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class AddItemActivityTest {
+class AddItemValidateTest {
 
     private AddItemActivity aia;
 
-    /**
-     * @throws java.lang.Exception
-     */
+
     @BeforeEach
-    public void newObject() throws Exception {
+    void newObject() {
         aia = new AddItemActivity();
     }
 
     @Test
-    public void testValidate1(){
+    void testValidate1(){
 
-        boolean result = false;
+        boolean result;
 
         result = aia.validate("",
                 "");
-        assertEquals(result, false);
+
+        assertFalse(result);
 
     }
 
     @Test
-    public void testValidate2() {
+    void testValidate2() {
 
-        boolean result = false;
+        boolean result;
 
         result = aia.validate("ABC",
                 "");
-        assertEquals(result, false);
+
+        assertTrue(result);
     }
 
     @Test
-    public void testValidate3() {
+    void testValidate3() {
 
-        boolean result = false;
+        boolean result;
 
         result = aia.validate("",
                 "ABC");
-        assertEquals(result, false);
+
+        assertFalse(result);
 
     }
 
     @Test
-    public void testValidate4() {
+    void testValidate4() {
 
-        boolean result = false;
+        boolean result;
 
         result = aia.validate("12345678901234567890",
                 "abc");
-        assertEquals(result, true);
+
+        assertTrue(result);
 
 
     }
 
     @Test
-    public void testValidate5() {
+    void testValidate5() {
 
-        boolean result = false;
+        boolean result;
 
         result = aia.validate("123456789012345678901",
                 "abc");
-        assertEquals(result, false);
+
+        assertFalse(result);
 
     }
 
     @Test
-    public void testValidate6() {
+    void testValidate6() {
 
-        boolean result = false;
+        boolean result;
 
         result = aia.validate("12345678901234567890",
                 "12345678901234567890123456789012345678901234567890");
-        assertEquals(result, true);
+
+        assertTrue(result);
 
     }
 
     @Test
-    public void testValidate7() {
+    void testValidate7() {
 
-        boolean result = false;
+        boolean result;
 
         result = aia.validate("12345678901234567890",
                 "123456789012345678901234567890123456789012345678901");
-        assertEquals(result, false);
+
+        assertFalse(result);
 
     }
 
     @Test
-    public void testValidate9() {
+    void testValidate9() {
 
-        boolean result = false;
+        boolean result;
 
         result = aia.validate("Titolo di \r\n prova",
                 "Descrizione\r\n di prova");
 
-        assertEquals(result, false);
+        assertFalse(result);
 
     }
 
     @Test
-    public void testValidate10() {
+    void testValidate10() {
 
-        boolean result = false;
+        boolean result;
 
         result = aia.validate("Titolo di \r\n prova",
                 "Descrizione di prova");
 
-        assertEquals(result, false);
+        assertFalse(result);
 
     }
 
     @Test
-    public void testValidate11() {
+    void testValidate11() {
 
-        boolean result = false;
+        boolean result;
 
         result = aia.validate("Titolo di prova",
                 "Descrizione\r\n di prova");
 
-        assertEquals(result, false);
+        assertFalse(result);
 
     }
 
     @Test
-    public void testValidate12() {
+    void testValidate12() {
 
-        boolean result = false;
+        boolean result;
 
         result = aia.validate("",
                 "Descrizione\r\n di prova");
 
-        assertEquals(result, false);
+        assertFalse(result);
 
     }
 
     @Test
-    public void testValidate13() {
+    void testValidate13() {
 
-        boolean result = false;
+        boolean result;
 
         result = aia.validate("Computer Nobetook",
                 "Buona CPU");
 
-        assertEquals(result, true);
+        assertTrue(result);
 
     }
 
     @Test
-    public void testValidate14() {
+    void testValidate14() {
 
-        boolean result = false;
+        boolean result;
 
         result = aia.validate("Titolo di \r prova",
                 "Descrizione\n di prova");
 
-        assertEquals(result, true);
+        assertTrue(result);
+
+    }
+
+    @Test
+    void testValidate15() {
+
+        boolean result;
+
+        result = aia.validate("   ",
+                "Descrizione di prova");
+
+        assertFalse(result);
 
     }
 
