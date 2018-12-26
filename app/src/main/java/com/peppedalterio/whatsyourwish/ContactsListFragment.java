@@ -133,7 +133,6 @@ public class ContactsListFragment extends Fragment {
      * This method defines the action to be performed on contactlistview click.
      * <br>
      * It shows the activity containing selected contact's wishlist.
-     *
      */
     private void mostraListaUtente(Contact contact) {
         Intent myIntent = new Intent(getActivity(), WishlistUtenteActivity.class);

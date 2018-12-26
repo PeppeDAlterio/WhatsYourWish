@@ -8,7 +8,6 @@ class AddItemValidateTest {
 
     private AddItemActivity aia;
 
-
     @BeforeEach
     void newObject() {
         aia = new AddItemActivity();
