@@ -40,7 +40,7 @@ public class MyWishlistFragment extends Fragment {
 
     }
 
-
+    @SuppressLint("HardwareIds")
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
@@ -59,68 +59,75 @@ public class MyWishlistFragment extends Fragment {
 
         simNumber = telemamanger.getLine1Number();
 
-        Log.d("SIM_NUMBER", "num="+simNumber);
+        if(simNumber != null) {
 
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        dbRef = database.getReference(simNumber);
+            Log.d("SIM_NUMBER", "num=" + simNumber);
 
-        dbRef.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            dbRef = database.getReference(simNumber);
 
-                Log.d("ADD", "added: " + dataSnapshot.getValue());
+            dbRef.addChildEventListener(new ChildEventListener() {
+                @Override
+                public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
-                String str = "";
+                    Log.d("ADD", "added: " + dataSnapshot.getValue());
 
-                String title = dataSnapshot.child(WishStrings.WISH_TITLE_KEY).getValue(String.class);
-                String description = dataSnapshot.child(WishStrings.WISH_DESCRIPTION_KEY).getValue(String.class);
-                str += title + WishStrings.SEPARATOR_TOKEN + description;
+                    String str = "";
 
-                adapter.add(str);
+                    String title = dataSnapshot.child(WishStrings.WISH_TITLE_KEY).getValue(String.class);
+                    String description = dataSnapshot.child(WishStrings.WISH_DESCRIPTION_KEY).getValue(String.class);
+                    str += title + WishStrings.SEPARATOR_TOKEN + description;
 
-            }
+                    adapter.add(str);
 
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                Log.d("CHANGE", "changed: " + dataSnapshot.getValue());
-            }
+                }
 
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                Log.d("REMOVE", "removed"+dataSnapshot.child(WishStrings.WISH_TITLE_KEY).getValue(String.class));
+                @Override
+                public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                    Log.d("CHANGE", "changed: " + dataSnapshot.getValue());
+                }
 
-                String str = dataSnapshot.child(WishStrings.WISH_TITLE_KEY).getValue(String.class) + WishStrings.SEPARATOR_TOKEN +
-                        dataSnapshot.child(WishStrings.WISH_DESCRIPTION_KEY).getValue(String.class);
+                @Override
+                public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+                    Log.d("REMOVE", "removed" + dataSnapshot.child(WishStrings.WISH_TITLE_KEY).getValue(String.class));
 
-                adapter.remove(str);
+                    String str = dataSnapshot.child(WishStrings.WISH_TITLE_KEY).getValue(String.class) + WishStrings.SEPARATOR_TOKEN +
+                            dataSnapshot.child(WishStrings.WISH_DESCRIPTION_KEY).getValue(String.class);
 
-            }
+                    adapter.remove(str);
 
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                Log.d("CHANGE", "changed: " + dataSnapshot.getValue());
-            }
+                }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+                @Override
+                public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                    Log.d("CHANGE", "changed: " + dataSnapshot.getValue());
+                }
 
-            }
-        });
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
 
-        FloatingActionButton actionButton = getActivity().findViewById(R.id.floatingActionButton);
-        actionButton.setOnClickListener((View v) -> addAWish());
+                }
+            });
 
-        listView.setOnItemClickListener(
-                (parent, view, position, id) ->
-                        Toast.makeText(getContext(), getString(R.string.toast_long_press_to_delete_wish),
-                                Toast.LENGTH_SHORT).show()
-        );
+            FloatingActionButton actionButton = getActivity().findViewById(R.id.floatingActionButton);
+            actionButton.setOnClickListener((View v) -> addAWish());
 
-        listView.setOnItemLongClickListener((parent, view, position, id) -> {
-            Log.d("DEBUG", "long_click:"+parent.getItemAtPosition(position).toString());
-            onItemLongClick(parent.getItemAtPosition(position).toString());
-            return true;
-        });
+            listView.setOnItemClickListener(
+                    (parent, view, position, id) ->
+                            Toast.makeText(getContext(), getString(R.string.toast_long_press_to_delete_wish),
+                                    Toast.LENGTH_SHORT).show()
+            );
+
+            listView.setOnItemLongClickListener((parent, view, position, id) -> {
+                Log.d("DEBUG", "long_click:" + parent.getItemAtPosition(position).toString());
+                onItemLongClick(parent.getItemAtPosition(position).toString());
+                return true;
+            });
+
+        } else {
+            Toast.makeText(getContext(), getString(R.string.toast_no_sim_number),
+                    Toast.LENGTH_LONG).show();
+        }
 
     }
 

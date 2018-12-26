@@ -19,4 +19,5 @@
     <string name="wishlist_message">Wishlist of the user</string>
     <string name="toast_long_press_to_delete_wish">Long press the wish to delete it</string>
     <string name="searchbar">Search&#8230;</string>
+    <string name="toast_no_sim_number">Unable to get the phone number from the device. Please set your own phone number from the device settings</string>
 </resources>
