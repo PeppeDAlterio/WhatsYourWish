@@ -139,7 +139,15 @@ public class MyWishlistFragment extends Fragment {
 
     }
 
-    private void onItemLongClick(String s) {
+    /**
+     * This method defines the action to be performed on any mywishlistrv item long click.
+     * <br>
+     * It shows an alert that lets you delete the selected wish from your wishlist.
+     *
+     * @param wishData containing wish title and description in format TITLE\r\nDESCRIPTION
+     * @author Giuseppe D'Alterio
+     */
+    private void onItemLongClick(String wishData) {
 
         if(getContext()==null) return;
 
@@ -149,7 +157,7 @@ public class MyWishlistFragment extends Fragment {
         builder.setCancelable(false);
 
         builder.setPositiveButton(getString(R.string.dialog_yes), (DialogInterface dialog, int which) -> {
-                Query query = dbRef.orderByChild(WishStrings.WISH_TITLE_KEY).equalTo(s.split(WishStrings.SEPARATOR_TOKEN)[0]);
+                Query query = dbRef.orderByChild(WishStrings.WISH_TITLE_KEY).equalTo(wishData.split(WishStrings.SEPARATOR_TOKEN)[0]);
 
                 query.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -177,6 +185,13 @@ public class MyWishlistFragment extends Fragment {
 
     }
 
+    /**
+     * This method defines the action to be performed on floatingActionButton click.
+     * <br>
+     * It shows the activity to add a new wish to your wishlist.
+     *
+     * @author Giuseppe D'Alterio
+     */
     private void addAWish() {
 
         Intent myIntent = new Intent(getActivity(), AddItemActivity.class);

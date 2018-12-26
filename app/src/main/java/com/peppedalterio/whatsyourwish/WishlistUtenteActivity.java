@@ -56,28 +56,7 @@ public class WishlistUtenteActivity extends AppCompatActivity {
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                boolean found = false;
-
-                for(DataSnapshot ds : dataSnapshot.getChildren()) {
-
-                    if(ds.getKey() != null && PhoneNumberUtils.compare(ds.getKey(), contact.getPhoneNumber())) {
-                        effectiveDbNumber = ds.getKey();
-                        ((TextView)findViewById(R.id.userwishlistnumber)).setText(effectiveDbNumber);
-                        found = true;
-                        break;
-                    }
-
-                }
-
-                if(found) {
-                    loadWishList();
-                } else {
-                    Toast.makeText(getApplicationContext(), getString(R.string.toast_user_not_found),
-                            Toast.LENGTH_SHORT).show();
-                    finish();
-                }
-
+                dataChanged(dataSnapshot);
             }
 
             @Override
@@ -92,6 +71,45 @@ public class WishlistUtenteActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * This method defines the action to be performed on database data change.
+     * <br>
+     * It checks if there's a number into the database comparable with the selected one.<br>
+     * If so, it invokes loadWishList to show the wishlist associated with the selected phone number.
+     *
+     * @author Giuseppe D'Alterio
+     */
+    private void dataChanged(@NonNull DataSnapshot dataSnapshot) {
+        boolean found = false;
+
+        for(DataSnapshot ds : dataSnapshot.getChildren()) {
+
+            if(ds.getKey() != null && PhoneNumberUtils.compare(ds.getKey(), contact.getPhoneNumber())) {
+                effectiveDbNumber = ds.getKey();
+                ((TextView)findViewById(R.id.userwishlistnumber)).setText(effectiveDbNumber);
+                found = true;
+                break;
+            }
+
+        }
+
+        if(found) {
+            loadWishList();
+        } else {
+            Toast.makeText(getApplicationContext(), getString(R.string.toast_user_not_found),
+                    Toast.LENGTH_SHORT).show();
+            finish();
+        }
+    }
+
+    /**
+     * This method loads the wishlist associated with the requested phone number from the database.
+     * <p>
+     * This method has to be invoked after a dataChange event
+     * </p>
+     *
+     * @author Giuseppe D'Alterio
+     */
     private void loadWishList() {
 
         DatabaseReference dbRef = database.getReference(effectiveDbNumber);

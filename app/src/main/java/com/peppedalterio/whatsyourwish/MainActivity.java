@@ -11,8 +11,6 @@ import android.support.v7.app.AppCompatActivity;
 
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
-import android.util.Log;
-import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -30,6 +28,15 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Setup the UI with a tablayout using a viewpager.
+     *
+     * <p>
+     * This method has to be invoked after that all permissions are granted.
+     * </p>
+     *
+     * @author Giuseppe D'Alterio
+     */
     private void continueWithPermissionsGranted() {
         ViewPager viewPager = findViewById(R.id.container);
         setupViewPage(viewPager);
@@ -38,6 +45,19 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.setupWithViewPager(viewPager);
     }
 
+    /**
+     * Setup the ViewPage with 2 Fragments:
+     * <br>
+     * - Conctacts list fragment
+     * <br>
+     * - My wishlist fragment
+     *
+     * <p>
+     * This method has to be invoked after that all permissions are granted.
+     * </p>
+     *
+     * @author Giuseppe D'Alterio
+     */
     private void setupViewPage(ViewPager viewPager) {
         SectionsPageAdapter adapter = new SectionsPageAdapter(getSupportFragmentManager());
         adapter.addFragment(new ContactsListFragment(), getString(R.string.contactslisttitletab));
@@ -46,6 +66,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * Request user's permissions to READ_CONTACTS (contact list)
+     * and to READ_PHONE STATE (phone number).
+     * @author Giuseppe D'Alterio
+     */
     @RequiresApi(api = Build.VERSION_CODES.M)
     private void getPermissionsToReadUserContactsAndToReadUserPhoneNumbers() {
 
@@ -64,6 +89,16 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Check if all permissions requested are granted
+     * <p>
+     * This method is invoked by onRequestPermissionsResult callback
+     * </p>
+     *
+     * @param grantResults array on int with requested permission results
+     * @return true if all permissions are granted, false otherwise
+     * @author Giuseppe D'Alterio
+     */
     private boolean hasAllPermissionsGranted(@NonNull int[] grantResults) {
         for (int grantResult : grantResults) {
             if (grantResult == PackageManager.PERMISSION_DENIED) {
@@ -73,7 +108,15 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    // Callback with the request from calling requestPermissions(...)
+    /**
+     * Callback with the request from calling requestPermissions.
+     * <br>
+     * This also invokes another method to check if all requested permissions are granted.
+     * <br>
+     * If so, invokes continueWithPermissionsGranted to display the UI
+     *
+     * @author Giuseppe D'Alterio
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String permissions[],
