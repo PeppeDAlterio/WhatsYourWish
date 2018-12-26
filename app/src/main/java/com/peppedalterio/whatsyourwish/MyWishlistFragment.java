@@ -41,6 +41,7 @@ public class MyWishlistFragment extends Fragment {
     }
 
     @SuppressLint("HardwareIds")
+    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
@@ -59,7 +60,7 @@ public class MyWishlistFragment extends Fragment {
 
         simNumber = telemamanger.getLine1Number();
 
-        if(simNumber != null) {
+        if(!simNumber.isEmpty()) {
 
             Log.d("SIM_NUMBER", "num=" + simNumber);
 
@@ -125,8 +126,15 @@ public class MyWishlistFragment extends Fragment {
             });
 
         } else {
+
             Toast.makeText(getContext(), getString(R.string.toast_no_sim_number),
                     Toast.LENGTH_LONG).show();
+
+            FloatingActionButton actionButton = getActivity().findViewById(R.id.floatingActionButton);
+            actionButton.setOnClickListener((View v) ->
+                    Toast.makeText(getContext(), getString(R.string.toast_no_sim_number),
+                    Toast.LENGTH_LONG).show());
+
         }
 
     }
