@@ -77,7 +77,6 @@ public class WishlistUtenteActivity extends AppCompatActivity {
      * It checks if there's a number into the database comparable with the selected one.<br>
      * If so, it invokes loadWishList to show the wishlist associated with the selected phone number.
      *
-     * @author Giuseppe D'Alterio
      */
     private void dataChanged(@NonNull DataSnapshot dataSnapshot) {
         boolean found = false;
@@ -108,7 +107,6 @@ public class WishlistUtenteActivity extends AppCompatActivity {
      * This method has to be invoked after a dataChange event
      * </p>
      *
-     * @author Giuseppe D'Alterio
      */
     private void loadWishList() {
 

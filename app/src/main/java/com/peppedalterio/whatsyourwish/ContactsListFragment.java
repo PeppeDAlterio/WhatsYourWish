@@ -34,7 +34,6 @@ public class ContactsListFragment extends Fragment {
      * <br>
      * We're just retriving DISPLAY_NAME and NUMBER for each contact.
      *
-     * @author Giuseppe D'Alterio
      */
     private static final String PROJECTION[] = {
             ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
@@ -46,7 +45,6 @@ public class ContactsListFragment extends Fragment {
      * <br>
      * We're just retriving contacts with a PHONE_NUMBER associated.
      *
-     * @author Giuseppe D'Alterio
      */
     private static final String SELECTION =
             ContactsContract.CommonDataKinds.Phone.NUMBER + " IS NOT NULL";
@@ -109,7 +107,6 @@ public class ContactsListFragment extends Fragment {
      * This method retrieves the contacts list.
      *
      * @return ArrayList containing the contacts list with DISPLAY_NAME and NUMBER
-     * @author Giuseppe D'Alterio
      */
     private ArrayList<String> getContactsList() {
         Cursor contactList = Objects.requireNonNull(getActivity()).getContentResolver().query(
@@ -137,7 +134,6 @@ public class ContactsListFragment extends Fragment {
      * <br>
      * It shows the activity containing selected contact's wishlist.
      *
-     * @author Giuseppe D'Alterio
      */
     private void mostraListaUtente(Contact contact) {
         Intent myIntent = new Intent(getActivity(), WishlistUtenteActivity.class);

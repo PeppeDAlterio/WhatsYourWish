@@ -35,7 +35,6 @@ public class MainActivity extends AppCompatActivity {
      * This method has to be invoked after that all permissions are granted.
      * </p>
      *
-     * @author Giuseppe D'Alterio
      */
     private void continueWithPermissionsGranted() {
         ViewPager viewPager = findViewById(R.id.container);
@@ -56,7 +55,6 @@ public class MainActivity extends AppCompatActivity {
      * This method has to be invoked after that all permissions are granted.
      * </p>
      *
-     * @author Giuseppe D'Alterio
      */
     private void setupViewPage(ViewPager viewPager) {
         SectionsPageAdapter adapter = new SectionsPageAdapter(getSupportFragmentManager());
@@ -69,7 +67,6 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Request user's permissions to READ_CONTACTS (contact list)
      * and to READ_PHONE STATE (phone number).
-     * @author Giuseppe D'Alterio
      */
     @RequiresApi(api = Build.VERSION_CODES.M)
     private void getPermissionsToReadUserContactsAndToReadUserPhoneNumbers() {
@@ -97,7 +94,6 @@ public class MainActivity extends AppCompatActivity {
      *
      * @param grantResults array on int with requested permission results
      * @return true if all permissions are granted, false otherwise
-     * @author Giuseppe D'Alterio
      */
     private boolean hasAllPermissionsGranted(@NonNull int[] grantResults) {
         for (int grantResult : grantResults) {
@@ -115,7 +111,6 @@ public class MainActivity extends AppCompatActivity {
      * <br>
      * If so, invokes continueWithPermissionsGranted to display the UI
      *
-     * @author Giuseppe D'Alterio
      */
     @Override
     public void onRequestPermissionsResult(int requestCode,
