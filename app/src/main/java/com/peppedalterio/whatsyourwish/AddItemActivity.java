@@ -46,6 +46,13 @@ public class AddItemActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * This method defines the action to be performed on addwishbutton click.
+     *
+     * It check for item's data validity and puts the info into the database.
+     *
+     * @author Giuseppe D'Alterio
+     */
     private boolean addItemClick() {
 
         String title = ((TextView)findViewById(R.id.wishtitle)).getText().toString();
@@ -91,6 +98,22 @@ public class AddItemActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * This method check the validity of wish title and description.
+     * <br>
+     * Title is required, so can't be empty or contain only blank spaces. Title lenght must be
+     * lesser and equal to 20.
+     * <br>
+     * Description is optional and is trimmed if containing only blank spaces. Description length
+     * mu be lesser and equal to 50.
+     * <br>
+     * Also both can't contain \r\n char.
+     *
+     * @param title Title of the item to be added to your wishlist
+     * @param description Description of the item to be added to your wishlist
+     * @return true if data are valid, false otherwise
+     * @author Giuseppe D'Alterio
+     */
     protected boolean validate(String title, String description) {
 
         if (description.trim().isEmpty())

@@ -25,15 +25,29 @@ import com.peppedalterio.whatsyourwish.pojo.WishStrings;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class ContactsListFragment extends Fragment {
-    
+
+    /**
+     * Projection for contacts list data retrival.
+     * <br>
+     * We're just retriving DISPLAY_NAME and NUMBER for each contact.
+     *
+     * @author Giuseppe D'Alterio
+     */
     private static final String PROJECTION[] = {
-            ContactsContract.CommonDataKinds.Phone._ID,
             ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
             ContactsContract.CommonDataKinds.Phone.NUMBER
     };
 
+    /**
+     * Selection for contacts list data retrival.
+     * <br>
+     * We're just retriving contacts with a PHONE_NUMBER associated.
+     *
+     * @author Giuseppe D'Alterio
+     */
     private static final String SELECTION =
             ContactsContract.CommonDataKinds.Phone.NUMBER + " IS NOT NULL";
 
@@ -55,27 +69,13 @@ public class ContactsListFragment extends Fragment {
         ListView contactsListView = getActivity().findViewById(R.id.contactlistview);
         EditText searchBar = getActivity().findViewById(R.id.contactssearchbar);
 
-        Cursor contactList = getActivity().getContentResolver().query(
-                ContactsContract.CommonDataKinds.Phone.CONTENT_URI, PROJECTION, SELECTION,null, null);
+        ArrayList<String> listItems = getContactsList();
+        if (listItems == null) return;
 
         ArrayAdapter<String> adapter;
-        List<Contact> numbersList = new ArrayList<>();
-        ArrayList<String> listItems = new ArrayList<>();
-
-        if(contactList == null) return;
-
-        while (contactList.moveToNext())
-        {
-            String name = contactList.getString(contactList.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
-            String phoneNumber = contactList.getString(contactList.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-            listItems.add(name + WishStrings.SEPARATOR_TOKEN + phoneNumber);
-            numbersList.add(new Contact(name, phoneNumber));
-        }
-        contactList.close();
-
         adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, listItems);
-
         contactsListView.setAdapter(adapter);
+
         contactsListView.setOnItemClickListener((parent, view, position, id) -> {
             String selectedItem = (String) parent.getItemAtPosition(position);
 
@@ -105,6 +105,40 @@ public class ContactsListFragment extends Fragment {
 
     }
 
+    /**
+     * This method retrieves the contacts list.
+     *
+     * @return ArrayList containing the contacts list with DISPLAY_NAME and NUMBER
+     * @author Giuseppe D'Alterio
+     */
+    private ArrayList<String> getContactsList() {
+        Cursor contactList = Objects.requireNonNull(getActivity()).getContentResolver().query(
+                ContactsContract.CommonDataKinds.Phone.CONTENT_URI, PROJECTION, SELECTION,null, null);
+
+        ArrayAdapter<String> adapter;
+        List<Contact> numbersList = new ArrayList<>();
+        ArrayList<String> listItems = new ArrayList<>();
+
+        if(contactList == null) return null;
+
+        while (contactList.moveToNext())
+        {
+            String name = contactList.getString(contactList.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+            String phoneNumber = contactList.getString(contactList.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+            listItems.add(name + WishStrings.SEPARATOR_TOKEN + phoneNumber);
+            numbersList.add(new Contact(name, phoneNumber));
+        }
+        contactList.close();
+        return listItems;
+    }
+
+    /**
+     * This method defines the action to be performed on contactlistview click.
+     * <br>
+     * It shows the activity containing selected contact's wishlist.
+     *
+     * @author Giuseppe D'Alterio
+     */
     private void mostraListaUtente(Contact contact) {
         Intent myIntent = new Intent(getActivity(), WishlistUtenteActivity.class);
         myIntent.putExtra("contact", contact);
