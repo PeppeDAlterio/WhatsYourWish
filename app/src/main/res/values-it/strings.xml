@@ -20,4 +20,5 @@
     <string name="wishlist_message">Wishlist dell\'utente</string>
     <string name="toast_long_press_to_delete_wish">Tieni premuto il desiderio per eliminarlo dalla wishlist</string>
     <string name="searchbar">Cerca&#8230;</string>
+    <string name="toast_no_sim_number">Impossibile leggere il numero di telefono associato al dispositivo in uso. Configurare il numero di telefono dalle impostazioni del dispositivo</string>
 </resources>
