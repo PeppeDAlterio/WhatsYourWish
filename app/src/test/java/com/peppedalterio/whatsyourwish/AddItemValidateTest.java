@@ -67,7 +67,7 @@ class AddItemValidateTest {
 
         boolean result;
 
-        result = aia.validate("123456789012345678901",
+        result = aia.validate("12345678901234567890123456789012345678901",
                 "abc");
 
         assertFalse(result);
