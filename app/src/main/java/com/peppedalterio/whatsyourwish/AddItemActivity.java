@@ -51,7 +51,6 @@ public class AddItemActivity extends AppCompatActivity {
      *
      * It check for item's data validity and puts the info into the database.
      *
-     * @author Giuseppe D'Alterio
      */
     private boolean addItemClick() {
 
@@ -112,7 +111,6 @@ public class AddItemActivity extends AppCompatActivity {
      * @param title Title of the item to be added to your wishlist
      * @param description Description of the item to be added to your wishlist
      * @return true if data are valid, false otherwise
-     * @author Giuseppe D'Alterio
      */
     protected boolean validate(String title, String description) {
 

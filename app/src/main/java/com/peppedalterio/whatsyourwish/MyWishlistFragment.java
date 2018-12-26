@@ -145,7 +145,6 @@ public class MyWishlistFragment extends Fragment {
      * It shows an alert that lets you delete the selected wish from your wishlist.
      *
      * @param wishData containing wish title and description in format TITLE\r\nDESCRIPTION
-     * @author Giuseppe D'Alterio
      */
     private void onItemLongClick(String wishData) {
 
