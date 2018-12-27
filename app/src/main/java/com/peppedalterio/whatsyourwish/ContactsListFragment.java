@@ -126,25 +126,27 @@ public class ContactsListFragment extends Fragment {
 
         String name, phoneNumber, lastNumber;
         boolean duplicate;
+        int i;
 
         while (contactList.moveToNext())
         {
             name = contactList.getString(contactList.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
             phoneNumber = contactList.getString(contactList.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
 
-
             /*
-                Comparing the number with the last inserted to check if it's a duplicate
-                written with another "format" (eg. +39 123 456 7890 and 1234567890)
+                Compare the number with last inserted ones (with the same contact's name)
+                to check if it's a duplicate written with another format
+                (eg. +39 123 456 7890 and 1234567890).
              */
+            i=0;
             duplicate = false;
-            if( numbersList.size()>0 ) {
+            while( (listItems.size()-1-i)>=0 &&
+                    listItems.get(listItems.size()-1-i).startsWith(name+WishStrings.SEPARATOR_TOKEN) ) {
 
-                lastNumber = numbersList.get(numbersList.size()-1);
-
-                if(PhoneNumberUtils.compare(lastNumber, phoneNumber))
+                if(PhoneNumberUtils.compare(numbersList.get(numbersList.size()-1-i), phoneNumber))
                     duplicate = true;
 
+                i++;
             }
 
             if(!duplicate) {
