@@ -46,7 +46,7 @@ public class WishlistTestSuite {
     private final String AVD_NUMBER = "+15555215554";
     private final String AVD_CONTACT_NAME = "Virtual Device";
 
-    private final String FAKE_CONTACT = "Fake Contact\r\n(000) 000-0000";
+    private final String FAKE_CONTACT = "Fake Contact\r\n0000000000";
 
     @Rule
     public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class);
