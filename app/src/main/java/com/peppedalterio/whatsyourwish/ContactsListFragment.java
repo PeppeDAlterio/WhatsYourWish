@@ -2,11 +2,13 @@ package com.peppedalterio.whatsyourwish;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.telephony.PhoneNumberUtils;
 import android.text.Editable;
 import android.text.Html;
 import android.text.TextWatcher;
@@ -20,11 +22,14 @@ import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
+import com.google.android.gms.common.util.NumberUtils;
 import com.peppedalterio.whatsyourwish.pojo.Contact;
 import com.peppedalterio.whatsyourwish.pojo.WishStrings;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 public class ContactsListFragment extends Fragment {
@@ -110,20 +115,43 @@ public class ContactsListFragment extends Fragment {
      */
     private ArrayList<String> getContactsList() {
         Cursor contactList = Objects.requireNonNull(getActivity()).getContentResolver().query(
-                ContactsContract.CommonDataKinds.Phone.CONTENT_URI, PROJECTION, SELECTION,null, null);
+                ContactsContract.CommonDataKinds.Phone.CONTENT_URI, PROJECTION, SELECTION,
+                null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME+" ASC");
 
         ArrayAdapter<String> adapter;
-        List<Contact> numbersList = new ArrayList<>();
+        List<String> numbersList = new ArrayList<>();
         ArrayList<String> listItems = new ArrayList<>();
 
         if(contactList == null) return null;
 
+        String name, phoneNumber, lastNumber;
+        boolean duplicate;
+
         while (contactList.moveToNext())
         {
-            String name = contactList.getString(contactList.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
-            String phoneNumber = contactList.getString(contactList.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-            listItems.add(name + WishStrings.SEPARATOR_TOKEN + phoneNumber);
-            numbersList.add(new Contact(name, phoneNumber));
+            name = contactList.getString(contactList.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+            phoneNumber = contactList.getString(contactList.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+
+
+            /*
+                Comparing the number with the last inserted to check if it's a duplicate
+                written with another "format" (eg. +39 123 456 7890 and 1234567890)
+             */
+            duplicate = false;
+            if( numbersList.size()>0 ) {
+
+                lastNumber = numbersList.get(numbersList.size()-1);
+
+                if(PhoneNumberUtils.compare(lastNumber, phoneNumber))
+                    duplicate = true;
+
+            }
+
+            if(!duplicate) {
+                listItems.add(name + WishStrings.SEPARATOR_TOKEN + PhoneNumberUtils.normalizeNumber(phoneNumber));
+                numbersList.add(PhoneNumberUtils.normalizeNumber(phoneNumber));
+            }
+
         }
         contactList.close();
         return listItems;
