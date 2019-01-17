@@ -20,4 +20,8 @@
     <string name="toast_long_press_to_delete_wish">Long press the wish to delete it</string>
     <string name="searchbar">Search&#8230;</string>
     <string name="toast_no_sim_number">Unable to get the phone number from the device. Please set your own phone number from the device settings</string>
+    <string name="toast_no_internet">No internet connection available!</string>
+    <string name="my_wishlist_no_internet">No internet connection available. Please connect to the Internet.</string>
+    <string name="button_refresh_no_internet">Refresh</string>
+    <string name="toast_refresh_rate">Please wait a few seconds before refreshing again</string>
 </resources>

@@ -1,6 +1,8 @@
 package com.peppedalterio.whatsyourwish;
 
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -24,6 +26,25 @@ import java.util.Map;
 public class AddItemActivity extends AppCompatActivity {
 
     private String simNumber;
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        ConnectivityManager cm =
+                (ConnectivityManager)getBaseContext().getSystemService(getBaseContext().CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();
+
+        if(!isConnected) {
+            Log.d("INTERNET", "NO CONNECTION");
+            Toast.makeText(getApplicationContext(), getString(R.string.toast_no_internet), Toast.LENGTH_SHORT).show();
+            finish();
+        }
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
