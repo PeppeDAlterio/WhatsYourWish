@@ -1,5 +1,6 @@
 package com.peppedalterio.whatsyourwish;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -32,7 +33,7 @@ public class AddItemActivity extends AppCompatActivity {
         super.onStart();
 
         ConnectivityManager cm =
-                (ConnectivityManager)getBaseContext().getSystemService(getBaseContext().CONNECTIVITY_SERVICE);
+                (ConnectivityManager)getBaseContext().getSystemService(Context.CONNECTIVITY_SERVICE);
 
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         boolean isConnected = activeNetwork != null &&

@@ -37,6 +37,7 @@ public class MyWishlistFragment extends Fragment {
     private DatabaseReference dbRef;
     private String simNumber;
     private ArrayAdapter<String> adapter;
+    private ChildEventListener childEventListener;
 
     private void disconnectedActionMethod() {
         Toast.makeText(getContext(), getString(R.string.toast_no_internet), Toast.LENGTH_SHORT).show();
@@ -59,9 +60,8 @@ public class MyWishlistFragment extends Fragment {
         boolean isConnected = false;
 
         if(getContext()!=null) {
-
             ConnectivityManager cm =
-                    (ConnectivityManager) getContext().getSystemService(getContext().CONNECTIVITY_SERVICE);
+                    (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
 
             NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
             isConnected = activeNetwork != null &&
@@ -142,6 +142,9 @@ public class MyWishlistFragment extends Fragment {
             return;
         }
 
+        if(lastRefreshTime>0)
+            dbRef.removeEventListener(childEventListener);
+
         lastRefreshTime = SystemClock.elapsedRealtime();
 
         adapter.clear();
@@ -151,7 +154,7 @@ public class MyWishlistFragment extends Fragment {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         dbRef = database.getReference(simNumber);
 
-        dbRef.addChildEventListener(new ChildEventListener() {
+        childEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
@@ -192,7 +195,9 @@ public class MyWishlistFragment extends Fragment {
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
-        });
+        };
+
+        dbRef.addChildEventListener(childEventListener);
 
         listView.setOnItemClickListener(
                 (parent, view, position, id) ->
