@@ -2,6 +2,7 @@ package com.peppedalterio.whatsyourwish;
 
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
@@ -12,6 +13,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -19,6 +21,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.peppedalterio.whatsyourwish.pojo.Contact;
+import com.peppedalterio.whatsyourwish.pojo.InternetConnection;
 import com.peppedalterio.whatsyourwish.pojo.WishStrings;
 
 import java.util.HashMap;
@@ -32,18 +35,24 @@ public class AddItemActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        ConnectivityManager cm =
-                (ConnectivityManager)getBaseContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        if(!checkInternetConnection())
+            finish();
 
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        boolean isConnected = activeNetwork != null &&
-                activeNetwork.isConnectedOrConnecting();
+    }
+
+    /*
+     * This method check if internet connection is available
+     */
+    private boolean checkInternetConnection() {
+
+        boolean isConnected = InternetConnection.checkForInternetConnection(getApplicationContext());
 
         if(!isConnected) {
             Log.d("INTERNET", "NO CONNECTION");
             Toast.makeText(getApplicationContext(), getString(R.string.toast_no_internet), Toast.LENGTH_SHORT).show();
-            finish();
         }
+
+        return isConnected;
 
     }
 
@@ -83,6 +92,10 @@ public class AddItemActivity extends AppCompatActivity {
             return false;
         }
 
+        if(!checkInternetConnection()) {
+            Log.d("ADD_A_WISH", "Error");
+            return true;
+        }
         DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference(simNumber);
 
         Query query = dbRef.orderByChild(WishStrings.WISH_TITLE_KEY).equalTo(title);
@@ -91,18 +104,20 @@ public class AddItemActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.getChildrenCount()>0) {
-                    Log.d("EXISTS", "esiste!!!");
+                    Log.d("ADD_A_WISH", "Exists");
                     Toast.makeText(getApplicationContext(), getString(R.string.toast_wish_exists), Toast.LENGTH_SHORT).show();
                 } else {
-                    Log.d("NOT_EXISTS", "non esiste :)");
+                    Log.d("ADD_A_WISH", "Not exists");
 
                     Map<String, Object> tmpMap = new HashMap<>();
                     tmpMap.put(WishStrings.WISH_TITLE_KEY, title);
                     tmpMap.put(WishStrings.WISH_DESCRIPTION_KEY, description);
 
                     DatabaseReference tmpRef = dbRef.push();
+
                     tmpRef.updateChildren(tmpMap);
 
+                    Log.d("ADD_A_WISH", "Success");
                     Toast.makeText(getApplicationContext(), getString(R.string.toast_add_wish_success), Toast.LENGTH_SHORT).show();
                     finish();
 

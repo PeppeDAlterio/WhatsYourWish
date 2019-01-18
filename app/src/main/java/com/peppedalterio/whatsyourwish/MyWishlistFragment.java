@@ -5,8 +5,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
@@ -27,6 +25,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.firebase.database.*;
+import com.peppedalterio.whatsyourwish.pojo.InternetConnection;
 import com.peppedalterio.whatsyourwish.pojo.WishStrings;
 
 
@@ -36,11 +35,16 @@ public class MyWishlistFragment extends Fragment {
     private long lastRefreshTime = 0;
     private DatabaseReference dbRef;
     private String simNumber;
-    private ArrayAdapter<String> adapter;
+    private ArrayAdapter<String> wishListAdapter;
     private ChildEventListener childEventListener;
 
+    /*
+     * Action to be performed if the client disconnects from the Internet
+     */
     private void disconnectedActionMethod() {
         Toast.makeText(getContext(), getString(R.string.toast_no_internet), Toast.LENGTH_SHORT).show();
+
+        wishListAdapter.clear();
 
         if(getActivity()!=null) {
             getActivity().findViewById(R.id.mylistnointernettextview).setVisibility(View.VISIBLE);
@@ -48,6 +52,9 @@ public class MyWishlistFragment extends Fragment {
         }
     }
 
+    /*
+     * Action to be performed if the client connects again to the Internet
+     */
     private void connectedActionMethod() {
         if(getActivity()!=null) {
             getActivity().findViewById(R.id.mylistnointernettextview).setVisibility(View.INVISIBLE);
@@ -55,24 +62,17 @@ public class MyWishlistFragment extends Fragment {
         }
     }
 
-    private boolean checkForInternetConnection() {
+    /*
+     * This method check if internet connection is available
+     */
+    private boolean checkInternetConnection() {
 
-        boolean isConnected = false;
+        boolean isConnected = InternetConnection.checkForInternetConnection(getContext());
 
-        if(getContext()!=null) {
-            ConnectivityManager cm =
-                    (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-
-            NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-            isConnected = activeNetwork != null &&
-                    activeNetwork.isConnectedOrConnecting();
-
-            if (isConnected)
-                connectedActionMethod();
-            else
-                disconnectedActionMethod();
-
-        }
+        if (isConnected)
+            connectedActionMethod();
+        else
+            disconnectedActionMethod();
 
         return isConnected;
     }
@@ -94,8 +94,8 @@ public class MyWishlistFragment extends Fragment {
 
         ListView listView = getActivity().findViewById(R.id.mywishlistrv);
 
-        adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1);
-        listView.setAdapter(adapter);
+        wishListAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1);
+        listView.setAdapter(wishListAdapter);
 
         TelephonyManager telemamanger = (TelephonyManager) getActivity().getSystemService(Context.TELEPHONY_SERVICE);
 
@@ -142,14 +142,14 @@ public class MyWishlistFragment extends Fragment {
             return;
         }
 
-        if(lastRefreshTime>0)
+        if(childEventListener!=null)
             dbRef.removeEventListener(childEventListener);
 
         lastRefreshTime = SystemClock.elapsedRealtime();
 
-        adapter.clear();
+        wishListAdapter.clear();
 
-        if( !checkForInternetConnection() ) return;
+        if( !checkInternetConnection() ) return;
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         dbRef = database.getReference(simNumber);
@@ -166,7 +166,7 @@ public class MyWishlistFragment extends Fragment {
                 String description = dataSnapshot.child(WishStrings.WISH_DESCRIPTION_KEY).getValue(String.class);
                 str += title + WishStrings.SEPARATOR_TOKEN + description;
 
-                adapter.add(str);
+                wishListAdapter.add(str);
 
             }
 
@@ -182,7 +182,7 @@ public class MyWishlistFragment extends Fragment {
                 String str = dataSnapshot.child(WishStrings.WISH_TITLE_KEY).getValue(String.class) + WishStrings.SEPARATOR_TOKEN +
                         dataSnapshot.child(WishStrings.WISH_DESCRIPTION_KEY).getValue(String.class);
 
-                adapter.remove(str);
+                wishListAdapter.remove(str);
 
             }
 
@@ -229,12 +229,17 @@ public class MyWishlistFragment extends Fragment {
         builder.setCancelable(false);
 
         builder.setPositiveButton(getString(R.string.dialog_yes), (DialogInterface dialog, int which) -> {
-            Query query = dbRef.orderByChild(WishStrings.WISH_TITLE_KEY).equalTo(wishData.split(WishStrings.SEPARATOR_TOKEN)[0]);
+
+            if(!checkInternetConnection())
+                return;
+
+            Query query = dbRef.orderByChild(WishStrings.WISH_TITLE_KEY).equalTo(wishData.split(WishStrings.SEPARATOR_TOKEN)[0]).limitToFirst(1);
 
             query.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    for (DataSnapshot ds: dataSnapshot.getChildren()) {
+                    if (dataSnapshot.getChildren().iterator().hasNext()) {
+                        DataSnapshot ds = dataSnapshot.getChildren().iterator().next();
                         ds.getRef().removeValue();
                     }
                 }
