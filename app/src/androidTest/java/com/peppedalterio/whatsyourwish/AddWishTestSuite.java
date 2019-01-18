@@ -100,13 +100,13 @@ public class AddWishTestSuite {
     }
 
     @Test
-    public void addndDeleteWishTest() {
+    public void addAndDeleteWishTest() {
 
         // Added a sleep statement to match the app's execution delay.
         // The recommended way to handle such scenarios is to use Espresso idling resources:
         // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
         try {
-            Thread.sleep(1500);
+            Thread.sleep(2000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -117,15 +117,11 @@ public class AddWishTestSuite {
 
         addAWish(TITOLO_E_DESCRIZIONE_TEST_WISH);
 
-        onView(withText(R.string.toast_add_wish_success)).inRoot(new ToastMatcher())
-                .check(matches(isDisplayed()));
-
-
         // Added a sleep statement to match the app's execution delay.
         // The recommended way to handle such scenarios is to use Espresso idling resources:
         // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
         try {
-            Thread.sleep(1000);
+            Thread.sleep(1500);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -164,7 +160,7 @@ public class AddWishTestSuite {
                 allOf(withId(R.id.floatingActionButton),
                         childAtPosition(
                                 withParent(withId(R.id.container)),
-                                0),
+                                3),
                         isDisplayed()));
         floatingActionButton.perform(click());
 
