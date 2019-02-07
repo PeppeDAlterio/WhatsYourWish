@@ -24,7 +24,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".WishlistUtenteActivity" />
+        <activity android:name=".UserWishlistActivity" />
         <activity android:name=".AddItemActivity"></activity>
     </application>
 

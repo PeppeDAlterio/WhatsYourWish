@@ -1,10 +1,6 @@
 package com.peppedalterio.whatsyourwish;
 
-import android.content.Context;
 import android.content.Intent;
-import android.location.Location;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,16 +9,14 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.peppedalterio.whatsyourwish.pojo.Contact;
-import com.peppedalterio.whatsyourwish.pojo.InternetConnection;
-import com.peppedalterio.whatsyourwish.pojo.WishStrings;
+import com.peppedalterio.whatsyourwish.util.InternetConnection;
+import com.peppedalterio.whatsyourwish.util.WishStrings;
 
 import java.util.HashMap;
 import java.util.Map;

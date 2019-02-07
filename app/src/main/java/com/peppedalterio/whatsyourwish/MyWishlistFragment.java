@@ -25,8 +25,8 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.firebase.database.*;
-import com.peppedalterio.whatsyourwish.pojo.InternetConnection;
-import com.peppedalterio.whatsyourwish.pojo.WishStrings;
+import com.peppedalterio.whatsyourwish.util.InternetConnection;
+import com.peppedalterio.whatsyourwish.util.WishStrings;
 
 
 public class MyWishlistFragment extends Fragment {

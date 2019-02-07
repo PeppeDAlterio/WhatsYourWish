@@ -1,9 +1,6 @@
 package com.peppedalterio.whatsyourwish;
 
-import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -22,10 +19,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.peppedalterio.whatsyourwish.pojo.Contact;
-import com.peppedalterio.whatsyourwish.pojo.WishStrings;
+import com.peppedalterio.whatsyourwish.util.Contact;
+import com.peppedalterio.whatsyourwish.util.InternetConnection;
+import com.peppedalterio.whatsyourwish.util.WishStrings;
 
-public class WishlistUtenteActivity extends AppCompatActivity {
+public class UserWishlistActivity extends AppCompatActivity {
 
     private String effectiveDbNumber;
 
@@ -36,28 +34,14 @@ public class WishlistUtenteActivity extends AppCompatActivity {
     private Contact contact;
 
     @Override
-    protected void onStart() {
-        super.onStart();
-
-        ConnectivityManager cm =
-                (ConnectivityManager)getBaseContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        boolean isConnected = activeNetwork != null &&
-                activeNetwork.isConnectedOrConnecting();
-
-        if(!isConnected) {
-            Log.d("INTERNET", "NO CONNECTION");
-            Toast.makeText(getApplicationContext(), getString(R.string.toast_no_internet), Toast.LENGTH_SHORT).show();
-            finish();
-        }
-
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wishlist_utente);
+
+        if (!InternetConnection.checkForInternetConnection(getApplicationContext())) {
+            Toast.makeText(getApplicationContext(), getString(R.string.toast_no_internet), Toast.LENGTH_SHORT).show();
+            finish();
+        }
 
         Intent intent = getIntent();
 
