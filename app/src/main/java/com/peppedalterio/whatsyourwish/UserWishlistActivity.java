@@ -27,6 +27,10 @@ import com.peppedalterio.whatsyourwish.util.Contact;
 import com.peppedalterio.whatsyourwish.util.InternetConnection;
 import com.peppedalterio.whatsyourwish.util.WishStrings;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 public class UserWishlistActivity extends AppCompatActivity {
 
     private String effectiveDbNumber;
@@ -36,6 +40,8 @@ public class UserWishlistActivity extends AppCompatActivity {
     private ArrayAdapter<String> adapter;
 
     private Contact contact;
+
+    private String simNumber;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +60,24 @@ public class UserWishlistActivity extends AppCompatActivity {
             finish();
 
         contact = (Contact) intent.getSerializableExtra("contact");
+
+
+        TelephonyManager telemamanger = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+
+        if (ActivityCompat.checkSelfPermission(this,
+                android.Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, android.Manifest.permission.READ_PHONE_NUMBERS) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, android.Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+
+        simNumber = telemamanger.getLine1Number();
+
+        if (simNumber!=null && PhoneNumberUtils.compare(simNumber, contact.getPhoneNumber())) {
+            Toast.makeText(getApplicationContext(), getString(R.string.toast_thiss_my_wishlist), Toast.LENGTH_SHORT).show();
+            finish();
+        }
+
 
         ListView listView = findViewById(R.id.userwishlist);
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
@@ -75,6 +99,12 @@ public class UserWishlistActivity extends AppCompatActivity {
             }
         });
 
+        listView.setOnItemClickListener(
+                (parent, view, position, id) ->
+                        Toast.makeText(getApplicationContext(), getString(R.string.toast_long_press_to_self_assign),
+                                Toast.LENGTH_SHORT).show()
+        );
+
         listView.setOnItemLongClickListener((parent, view, position, id) -> {
             onItemLongClick(parent.getItemAtPosition(position).toString(), position);
             return true;
@@ -84,42 +114,65 @@ public class UserWishlistActivity extends AppCompatActivity {
 
     private void onItemLongClick(String wishData, int pos) {
 
-        //TODO
+        //TODO: Check internet connection
         /*if(!checkInternetConnection())
             return;*/
 
-        if (wishData.split(WishStrings.SEPARATOR_TOKEN).length>2)
-            return;
-        TelephonyManager telemamanger = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+        String splitData[] = wishData.split(WishStrings.SEPARATOR_TOKEN);
+        String assignee;
+        String assigneeDate;
+        String newItemStr;
 
-        if (ActivityCompat.checkSelfPermission(this,
-                android.Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED &&
-                    ActivityCompat.checkSelfPermission(this, android.Manifest.permission.READ_PHONE_NUMBERS) != PackageManager.PERMISSION_GRANTED &&
-                    ActivityCompat.checkSelfPermission(this, android.Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+        if(simNumber==null || simNumber.isEmpty()) {
+            Toast.makeText(getApplicationContext(), getString(R.string.toast_no_sim_number), Toast.LENGTH_SHORT).show();
             return;
         }
 
-        String simNumber = telemamanger.getLine1Number();
-
-        if(simNumber==null || simNumber.isEmpty())
+        /* case assigned to another person -> do nothing */
+        if (splitData.length>2 && !splitData[2].contains(simNumber) ) {
+            Log.d("ASSIGNEE", "case_1 - simNumber: " + simNumber + "| splitted: " + splitData[2]);
+            Toast.makeText(getApplicationContext(), getString(R.string.toast_assigned_to_another_one), Toast.LENGTH_SHORT).show();
             return;
+        }
+        /* case assigned to yourself -> delete the assignment */
+        else if (splitData.length>2 && splitData[2].contains(simNumber)) {
+            Log.d("ASSIGNEE", "case_2");
+            assignee = "";
+            assigneeDate = "";
+            newItemStr =    splitData[0] + WishStrings.SEPARATOR_TOKEN +
+                            splitData[1];
+        }
+        /* case not assigned -> assign to yourself */
+        else {
+            Log.d("ASSIGNEE", "case_3");
+            Date todayDate = Calendar.getInstance().getTime();
+            SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+            assigneeDate = formatter.format(todayDate);
+            assignee = simNumber;
+
+            newItemStr = wishData.concat(appendAssignee(assignee, assigneeDate));
+        }
 
         DatabaseReference dbRef = database.getReference(effectiveDbNumber);
 
-        Query query = dbRef.orderByChild(WishStrings.WISH_TITLE_KEY).equalTo(wishData.split(WishStrings.SEPARATOR_TOKEN)[0]).limitToFirst(1);
+        Query query = dbRef.orderByChild(WishStrings.WISH_TITLE_KEY).equalTo(splitData[0]).limitToFirst(1);
 
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.getChildren().iterator().hasNext()) {
                     DataSnapshot ds = dataSnapshot.getChildren().iterator().next();
-                    ds.child(WishStrings.WISH_ASSIGNEE).getRef().setValue(simNumber);
-                    ds.child(WishStrings.PROCESSING_WISH_SINCE).getRef().setValue("01/23/4567");
-                    String newItemStr = wishData.concat(appendAssignee(simNumber, "01/23/4567"));
+                    ds.child(WishStrings.WISH_ASSIGNEE).getRef().setValue(assignee);
+                    ds.child(WishStrings.PROCESSING_WISH_SINCE).getRef().setValue(assigneeDate);
                     adapter.remove(wishData);
                     adapter.insert(newItemStr, pos);
+                    if(assignee.isEmpty()) {
+                        Toast.makeText(getApplicationContext(), getString(R.string.toast_remove_assignment), Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getApplicationContext(), getString(R.string.toast_self_assign), Toast.LENGTH_SHORT).show();
+                    }
                 }
-            }//TODO: maybe there's a better solution
+            }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -231,6 +284,5 @@ public class UserWishlistActivity extends AppCompatActivity {
                 WishStrings.SEPARATOR_TOKEN +
                 getString(R.string.userwishlist_assign_date) + ": " + processingDate;
     }
-
 
 }
