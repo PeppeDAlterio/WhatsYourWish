@@ -1,11 +1,15 @@
 package com.peppedalterio.whatsyourwish;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.telephony.PhoneNumberUtils;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -45,8 +49,8 @@ public class UserWishlistActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
 
-        if(intent.getSerializableExtra("contact") == null ||
-                !(intent.getSerializableExtra("contact") instanceof  Contact))
+        if (intent.getSerializableExtra("contact") == null ||
+                !(intent.getSerializableExtra("contact") instanceof Contact))
             finish();
 
         contact = (Contact) intent.getSerializableExtra("contact");
@@ -71,9 +75,57 @@ public class UserWishlistActivity extends AppCompatActivity {
             }
         });
 
+        listView.setOnItemLongClickListener((parent, view, position, id) -> {
+            onItemLongClick(parent.getItemAtPosition(position).toString(), position);
+            return true;
+        });
 
+    }
 
+    private void onItemLongClick(String wishData, int pos) {
 
+        //TODO
+        /*if(!checkInternetConnection())
+            return;*/
+
+        if (wishData.split(WishStrings.SEPARATOR_TOKEN).length>2)
+            return;
+        TelephonyManager telemamanger = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+
+        if (ActivityCompat.checkSelfPermission(this,
+                android.Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED &&
+                    ActivityCompat.checkSelfPermission(this, android.Manifest.permission.READ_PHONE_NUMBERS) != PackageManager.PERMISSION_GRANTED &&
+                    ActivityCompat.checkSelfPermission(this, android.Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+
+        String simNumber = telemamanger.getLine1Number();
+
+        if(simNumber==null || simNumber.isEmpty())
+            return;
+
+        DatabaseReference dbRef = database.getReference(effectiveDbNumber);
+
+        Query query = dbRef.orderByChild(WishStrings.WISH_TITLE_KEY).equalTo(wishData.split(WishStrings.SEPARATOR_TOKEN)[0]).limitToFirst(1);
+
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.getChildren().iterator().hasNext()) {
+                    DataSnapshot ds = dataSnapshot.getChildren().iterator().next();
+                    ds.child(WishStrings.WISH_ASSIGNEE).getRef().setValue(simNumber);
+                    ds.child(WishStrings.PROCESSING_WISH_SINCE).getRef().setValue("01/23/4567");
+                    String newItemStr = wishData.concat(appendAssignee(simNumber, "01/23/4567"));
+                    adapter.remove(wishData);
+                    adapter.insert(newItemStr, pos);
+                }
+            }//TODO: maybe there's a better solution
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e("TAG", "onCancelled", databaseError.toException());
+            }
+        });
 
     }
 
@@ -131,15 +183,12 @@ public class UserWishlistActivity extends AppCompatActivity {
                 String assignee = dataSnapshot.child(WishStrings.WISH_ASSIGNEE).getValue(String.class);
                 String processingDate = dataSnapshot.child(WishStrings.PROCESSING_WISH_SINCE).getValue(String.class);
 
-                str =   getString(R.string.userwishlist_title) + ": " + title +
+                str =   title +
                         WishStrings.SEPARATOR_TOKEN +
                         getString(R.string.userwishlist_description) + ": " + description;
 
                 if(assignee!=null && !assignee.isEmpty()) {
-                    str += WishStrings.SEPARATOR_TOKEN +
-                            getString(R.string.userwishlist_self_assigned) + ": " + assignee +
-                            WishStrings.SEPARATOR_TOKEN +
-                            getString(R.string.userwishlist_assign_date) + ": " + processingDate;
+                    str += appendAssignee(assignee, processingDate);
                 }
 
                 adapter.add(str);
@@ -173,6 +222,14 @@ public class UserWishlistActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    @NonNull
+    private String appendAssignee(String assignee, String processingDate) {
+        return WishStrings.SEPARATOR_TOKEN +
+                getString(R.string.userwishlist_self_assigned) + ": " + assignee +
+                WishStrings.SEPARATOR_TOKEN +
+                getString(R.string.userwishlist_assign_date) + ": " + processingDate;
     }
 
 

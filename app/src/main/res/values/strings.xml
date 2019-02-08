@@ -24,7 +24,6 @@
     <string name="my_wishlist_no_internet">No internet connection available. Please connect to the Internet.</string>
     <string name="button_refresh_no_internet">Refresh</string>
     <string name="toast_refresh_rate">Please wait a few seconds before refreshing again</string>
-    <string name="userwishlist_title">Title</string>
     <string name="userwishlist_description">Description</string>
     <string name="userwishlist_self_assigned">Self-assigned</string>
     <string name="userwishlist_assign_date">In process date</string>

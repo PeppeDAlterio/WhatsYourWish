@@ -230,27 +230,27 @@ public class MyWishlistFragment extends Fragment {
 
         builder.setPositiveButton(getString(R.string.dialog_yes), (DialogInterface dialog, int which) -> {
 
-            if(!checkInternetConnection())
-                return;
+        if(!checkInternetConnection())
+            return;
 
-            Query query = dbRef.orderByChild(WishStrings.WISH_TITLE_KEY).equalTo(wishData.split(WishStrings.SEPARATOR_TOKEN)[0]).limitToFirst(1);
+        Query query = dbRef.orderByChild(WishStrings.WISH_TITLE_KEY).equalTo(wishData.split(WishStrings.SEPARATOR_TOKEN)[0]).limitToFirst(1);
 
-            query.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.getChildren().iterator().hasNext()) {
-                        DataSnapshot ds = dataSnapshot.getChildren().iterator().next();
-                        ds.getRef().removeValue();
-                    }
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.getChildren().iterator().hasNext()) {
+                    DataSnapshot ds = dataSnapshot.getChildren().iterator().next();
+                    ds.getRef().removeValue();
                 }
+            }
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                    Log.e("TAG", "onCancelled", databaseError.toException());
-                }
-            });
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e("TAG", "onCancelled", databaseError.toException());
+            }
+        });
 
-            Toast.makeText(getContext(), getString(R.string.remove_wish_ok), Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), getString(R.string.remove_wish_ok), Toast.LENGTH_SHORT).show();
 
         });
 
