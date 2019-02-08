@@ -106,8 +106,7 @@ public class AddItemActivity extends AppCompatActivity {
                     Map<String, Object> tmpMap = new HashMap<>();
                     tmpMap.put(WishStrings.WISH_TITLE_KEY, title);
                     tmpMap.put(WishStrings.WISH_DESCRIPTION_KEY, description);
-                    tmpMap.put(WishStrings.PROCESSING_WISH, 0);
-                    tmpMap.put(WishStrings.WISH_ASSIGNED_TO, "");
+                    tmpMap.put(WishStrings.WISH_ASSIGNEE, "");
                     tmpMap.put(WishStrings.PROCESSING_WISH_SINCE, "");
 
                     DatabaseReference tmpRef = dbRef.push();

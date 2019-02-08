@@ -124,11 +124,23 @@ public class UserWishlistActivity extends AppCompatActivity {
 
                 Log.d("ADD", "added: " + dataSnapshot.getValue());
 
-                String str = "";
+                String str;
 
                 String title = dataSnapshot.child(WishStrings.WISH_TITLE_KEY).getValue(String.class);
                 String description = dataSnapshot.child(WishStrings.WISH_DESCRIPTION_KEY).getValue(String.class);
-                str += title + WishStrings.SEPARATOR_TOKEN + description;
+                String assignee = dataSnapshot.child(WishStrings.WISH_ASSIGNEE).getValue(String.class);
+                String processingDate = dataSnapshot.child(WishStrings.PROCESSING_WISH_SINCE).getValue(String.class);
+
+                str =   getString(R.string.userwishlist_title) + ": " + title +
+                        WishStrings.SEPARATOR_TOKEN +
+                        getString(R.string.userwishlist_description) + ": " + description;
+
+                if(assignee!=null && !assignee.isEmpty()) {
+                    str += WishStrings.SEPARATOR_TOKEN +
+                            getString(R.string.userwishlist_self_assigned) + ": " + assignee +
+                            WishStrings.SEPARATOR_TOKEN +
+                            getString(R.string.userwishlist_assign_date) + ": " + processingDate;
+                }
 
                 adapter.add(str);
 

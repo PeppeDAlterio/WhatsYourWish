@@ -25,4 +25,8 @@
     <string name="my_wishlist_no_internet">Nessuna connessione ad internet. Connettersi ad una rete Internet.</string>
     <string name="button_refresh_no_internet">Aggiorna</string>
     <string name="toast_refresh_rate">Attendi qualche secondo prima di aggiornare nuovamente</string>
+    <string name="userwishlist_title">Titolo</string>
+    <string name="userwishlist_description">Descrizione</string>
+    <string name="userwishlist_self_assigned">Assegnatario</string>
+    <string name="userwishlist_assign_date">In lavorazione da</string>
 </resources>
