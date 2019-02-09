@@ -130,13 +130,18 @@ public class UserWishlistActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * This method handles the assignment/de-assignment of the user to the long-clicked wish
+     * @param wishData listview item long-clicked
+     * @param pos position of the listview item long-clicked
+     */
     private void onItemLongClick(String wishData, int pos) {
 
         if(!checkInternetConnection())
             return;
 
-        String splitData[] = wishData.split(WishStrings.SEPARATOR_TOKEN);
-
+        /* NB: wish title is unique for a user */
+        String wishTitle = wishData.split(WishStrings.SEPARATOR_TOKEN)[0];
 
         if(simNumber==null || simNumber.isEmpty()) {
             Toast.makeText(getApplicationContext(), getString(R.string.toast_no_sim_number), Toast.LENGTH_SHORT).show();
@@ -145,14 +150,18 @@ public class UserWishlistActivity extends AppCompatActivity {
 
         DatabaseReference dbRef = database.getReference(effectiveDbNumber);
 
-        Query query = dbRef.orderByChild(WishStrings.WISH_TITLE_KEY).equalTo(splitData[0]).limitToFirst(1);
+        Query query = dbRef.orderByChild(WishStrings.WISH_TITLE_KEY).equalTo(wishTitle).limitToFirst(1);
 
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.getChildren().iterator().hasNext()) {
+
                     DataSnapshot ds = dataSnapshot.getChildren().iterator().next();
-                    String key = (String) ds.child(WishStrings.WISH_ASSIGNEE).getValue();
+                    /* wish data from DB */
+                    String currentAssignee = (String) ds.child(WishStrings.WISH_ASSIGNEE).getValue();
+                    String wishDescription = (String) ds.child(WishStrings.WISH_DESCRIPTION_KEY).getValue();
+                    String currentAssigneeDate = (String) ds.child(WishStrings.PROCESSING_WISH_SINCE).getValue();
 
                     /*
                         Taking current status of the assignee to decide if it's possible to
@@ -162,41 +171,55 @@ public class UserWishlistActivity extends AppCompatActivity {
                         case 3: not assigned -> assign to yourself
                      */
 
-                    String assignee;
-                    String assigneeDate;
-                    String newItemStr;
+                    String newAssignee;
+                    String newAssigneeDate;
+                    String newWishItemStr;
 
-                    /* case 1: assigned to another person -> do nothing */
-                    if ( key!=null && !key.isEmpty() && !PhoneNumberUtils.compare(simNumber, key)) {
-                        Log.d("ASSIGNEE", "case_1 - simNumber: " + simNumber + "| assignee: " + key);
+                    /* case 1: assigned to another person -> update displayed info if the current assignee is not displayed */
+                    if ( currentAssignee!=null && !currentAssignee.isEmpty() && !PhoneNumberUtils.compare(simNumber, currentAssignee)) {
+                        Log.d("ASSIGNEE", "case_1 - simNumber: " + simNumber + "| assignee: " + currentAssignee);
                         Toast.makeText(getApplicationContext(), getString(R.string.toast_assigned_to_another_one), Toast.LENGTH_SHORT).show();
+                        // updating displayed info with current assignee if currently not displayed
+                        if(!wishData.contains(": "+currentAssignee+WishStrings.SEPARATOR_TOKEN)) {
+                            newWishItemStr = formatWishDataStr(wishTitle, wishDescription, currentAssignee, currentAssigneeDate);
+                            //newWishItemStr = wishData.concat(appendAssignee(currentAssignee, currentAssigneeDate));
+                            adapter.remove(wishData);
+                            adapter.insert(newWishItemStr, pos);
+                        }
                         return;
                     }
                     /* case 2: assigned to yourself -> delete the assignment */
-                    else if ( key!=null && !key.isEmpty() && PhoneNumberUtils.compare(simNumber, key)) {
+                    else if ( currentAssignee!=null && !currentAssignee.isEmpty() && PhoneNumberUtils.compare(simNumber, currentAssignee)) {
                         Log.d("ASSIGNEE", "case_2");
-                        assignee = "";
-                        assigneeDate = "";
-                        newItemStr =    splitData[0] + WishStrings.SEPARATOR_TOKEN +
-                                        splitData[1];
+                        newAssignee = "";
+                        newAssigneeDate = "";
+                        /*newWishItemStr = wishTitle;
+                        if (wishDescription!=null && !wishDescription.isEmpty()) {
+                            newWishItemStr +=   WishStrings.SEPARATOR_TOKEN +
+                                            wishDescription;
+                        }*/
                     }
                     /* case 3: not assigned -> assign to yourself */
                     else {
                         Log.d("ASSIGNEE", "case_3");
                         Date todayDate = Calendar.getInstance().getTime();
                         @SuppressLint("SimpleDateFormat") SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
-                        assigneeDate = formatter.format(todayDate);
-                        assignee = simNumber;
-
-                        newItemStr = wishData.concat(appendAssignee(assignee, assigneeDate));
+                        newAssigneeDate = formatter.format(todayDate);
+                        newAssignee = simNumber;
+                        //newWishItemStr = wishData.concat(appendAssignee(newAssignee, newAssigneeDate));
                     }
+
+                    // format new wish list item string
+                    newWishItemStr = formatWishDataStr(wishTitle, wishDescription, newAssignee, newAssigneeDate);
+
                     /* apply the change */
-                    ds.child(WishStrings.WISH_ASSIGNEE).getRef().setValue(assignee);
-                    ds.child(WishStrings.PROCESSING_WISH_SINCE).getRef().setValue(assigneeDate);
+                    ds.child(WishStrings.WISH_ASSIGNEE).getRef().setValue(newAssignee);
+                    ds.child(WishStrings.PROCESSING_WISH_SINCE).getRef().setValue(newAssigneeDate);
                     adapter.remove(wishData);
-                    adapter.insert(newItemStr, pos);
+                    adapter.insert(newWishItemStr, pos);
+
                     /* show and informative toast */
-                    if(assignee.isEmpty()) {
+                    if(newAssignee.isEmpty()) {
                         Toast.makeText(getApplicationContext(), getString(R.string.toast_remove_assignment), Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(getApplicationContext(), getString(R.string.toast_self_assign), Toast.LENGTH_SHORT).show();
@@ -267,6 +290,8 @@ public class UserWishlistActivity extends AppCompatActivity {
                 String assignee = dataSnapshot.child(WishStrings.WISH_ASSIGNEE).getValue(String.class);
                 String processingDate = dataSnapshot.child(WishStrings.PROCESSING_WISH_SINCE).getValue(String.class);
 
+                wishDataStr = formatWishDataStr(title, description, assignee, processingDate);
+                /*
                 wishDataStr = title;
 
                 if (description!=null && !description.isEmpty()) {
@@ -277,7 +302,7 @@ public class UserWishlistActivity extends AppCompatActivity {
                 if(assignee!=null && !assignee.isEmpty()) {
                     wishDataStr += appendAssignee(assignee, processingDate);
                 }
-
+                */
                 adapter.add(wishDataStr);
 
             }
@@ -311,6 +336,7 @@ public class UserWishlistActivity extends AppCompatActivity {
 
     }
 
+    //TODO: JUnit test this method
     /**
         This method appends assignee's information to the listview item for the wish:
         assignee: phone number of the assignee
@@ -322,6 +348,33 @@ public class UserWishlistActivity extends AppCompatActivity {
                 getString(R.string.userwishlist_self_assigned) + ": " + assignee +
                 WishStrings.SEPARATOR_TOKEN +
                 getString(R.string.userwishlist_assign_date) + ": " + processingDate;
+    }
+
+    //TODO: JUnit test this method
+    /**
+     * This methos formats the wish data String to be displayed into the list view.
+     * @param title wish title
+     * @param description wish description
+     * @param assignee wish assignee
+     * @param processingDate date on which the assignee took over the wish
+     * @return Formatted string for list view item for user wish list
+     */
+    private String formatWishDataStr(@NonNull String title, String description, String assignee, String processingDate) {
+
+        String wishDataStr;
+
+        wishDataStr = title;
+
+        if (description!=null && !description.isEmpty()) {
+            wishDataStr +=  WishStrings.SEPARATOR_TOKEN +
+                            getString(R.string.userwishlist_description) + ": " + description;
+        }
+
+        if(assignee!=null && !assignee.isEmpty()) {
+            wishDataStr += appendAssignee(assignee, processingDate);
+        }
+
+        return wishDataStr;
     }
 
 }
