@@ -2,6 +2,7 @@ package com.peppedalterio.whatsyourwish;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
@@ -21,8 +22,11 @@ import android.widget.ListView;
 import com.peppedalterio.whatsyourwish.util.Contact;
 import com.peppedalterio.whatsyourwish.util.WishStrings;
 
+
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 public class ContactsListFragment extends Fragment {
@@ -120,6 +124,7 @@ public class ContactsListFragment extends Fragment {
         String name, phoneNumber, lastNumber;
         boolean duplicate;
         int i;
+
 
         while (contactList.moveToNext())
         {
