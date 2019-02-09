@@ -44,6 +44,22 @@ public class UserWishlistActivity extends AppCompatActivity {
 
     private String simNumber;
 
+    /*
+     * This method check if internet connection is available
+     */
+    private boolean checkInternetConnection() {
+
+        boolean isConnected = InternetConnection.checkForInternetConnection(getApplicationContext());
+
+        if(!isConnected) {
+            Log.d("INTERNET", "NO CONNECTION");
+            Toast.makeText(getApplicationContext(), getString(R.string.toast_no_internet), Toast.LENGTH_SHORT).show();
+        }
+
+        return isConnected;
+
+    }
+
     @SuppressLint("HardwareIds")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,9 +132,8 @@ public class UserWishlistActivity extends AppCompatActivity {
 
     private void onItemLongClick(String wishData, int pos) {
 
-        //TODO: Check internet connection
-        /*if(!checkInternetConnection())
-            return;*/
+        if(!checkInternetConnection())
+            return;
 
         String splitData[] = wishData.split(WishStrings.SEPARATOR_TOKEN);
 
