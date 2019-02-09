@@ -15,8 +15,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.peppedalterio.whatsyourwish.pojo.Contact;
-import com.peppedalterio.whatsyourwish.pojo.WishStrings;
+import com.peppedalterio.whatsyourwish.util.InternetConnection;
+import com.peppedalterio.whatsyourwish.util.WishStrings;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,6 +24,31 @@ import java.util.Map;
 public class AddItemActivity extends AppCompatActivity {
 
     private String simNumber;
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        if(!checkInternetConnection())
+            finish();
+
+    }
+
+    /*
+     * This method check if internet connection is available
+     */
+    private boolean checkInternetConnection() {
+
+        boolean isConnected = InternetConnection.checkForInternetConnection(getApplicationContext());
+
+        if(!isConnected) {
+            Log.d("INTERNET", "NO CONNECTION");
+            Toast.makeText(getApplicationContext(), getString(R.string.toast_no_internet), Toast.LENGTH_SHORT).show();
+        }
+
+        return isConnected;
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +86,10 @@ public class AddItemActivity extends AppCompatActivity {
             return false;
         }
 
+        if(!checkInternetConnection()) {
+            Log.d("ADD_A_WISH", "Error");
+            return true;
+        }
         DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference(simNumber);
 
         Query query = dbRef.orderByChild(WishStrings.WISH_TITLE_KEY).equalTo(title);
@@ -69,18 +98,22 @@ public class AddItemActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.getChildrenCount()>0) {
-                    Log.d("EXISTS", "esiste!!!");
+                    Log.d("ADD_A_WISH", "Exists");
                     Toast.makeText(getApplicationContext(), getString(R.string.toast_wish_exists), Toast.LENGTH_SHORT).show();
                 } else {
-                    Log.d("NOT_EXISTS", "non esiste :)");
+                    Log.d("ADD_A_WISH", "Not exists");
 
                     Map<String, Object> tmpMap = new HashMap<>();
                     tmpMap.put(WishStrings.WISH_TITLE_KEY, title);
                     tmpMap.put(WishStrings.WISH_DESCRIPTION_KEY, description);
+                    tmpMap.put(WishStrings.WISH_ASSIGNEE, "");
+                    tmpMap.put(WishStrings.PROCESSING_WISH_SINCE, "");
 
                     DatabaseReference tmpRef = dbRef.push();
+
                     tmpRef.updateChildren(tmpMap);
 
+                    Log.d("ADD_A_WISH", "Success");
                     Toast.makeText(getApplicationContext(), getString(R.string.toast_add_wish_success), Toast.LENGTH_SHORT).show();
                     finish();
 

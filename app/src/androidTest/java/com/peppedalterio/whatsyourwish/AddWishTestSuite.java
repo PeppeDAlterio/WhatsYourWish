@@ -11,7 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 
-import com.peppedalterio.whatsyourwish.pojo.WishStrings;
+import com.peppedalterio.whatsyourwish.util.WishStrings;
 import com.peppedalterio.whatsyourwish.utils.ToastMatcher;
 
 import org.hamcrest.Description;
@@ -38,9 +38,6 @@ import static android.support.test.espresso.matcher.ViewMatchers.withParent;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 
-import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.matcher.RootMatchers.withDecorView;
-import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
@@ -100,13 +97,13 @@ public class AddWishTestSuite {
     }
 
     @Test
-    public void addndDeleteWishTest() {
+    public void addAndDeleteWishTest() {
 
         // Added a sleep statement to match the app's execution delay.
         // The recommended way to handle such scenarios is to use Espresso idling resources:
         // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
         try {
-            Thread.sleep(1500);
+            Thread.sleep(2000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -117,15 +114,11 @@ public class AddWishTestSuite {
 
         addAWish(TITOLO_E_DESCRIZIONE_TEST_WISH);
 
-        onView(withText(R.string.toast_add_wish_success)).inRoot(new ToastMatcher())
-                .check(matches(isDisplayed()));
-
-
         // Added a sleep statement to match the app's execution delay.
         // The recommended way to handle such scenarios is to use Espresso idling resources:
         // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
         try {
-            Thread.sleep(1000);
+            Thread.sleep(1500);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -164,7 +157,7 @@ public class AddWishTestSuite {
                 allOf(withId(R.id.floatingActionButton),
                         childAtPosition(
                                 withParent(withId(R.id.container)),
-                                0),
+                                3),
                         isDisplayed()));
         floatingActionButton.perform(click());
 

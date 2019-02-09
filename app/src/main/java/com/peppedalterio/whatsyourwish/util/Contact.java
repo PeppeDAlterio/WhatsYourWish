@@ -1,4 +1,4 @@
-package com.peppedalterio.whatsyourwish.pojo;
+package com.peppedalterio.whatsyourwish.util;
 
 import java.io.Serializable;
 

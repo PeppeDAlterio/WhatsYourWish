@@ -1,4 +1,4 @@
-package com.peppedalterio.whatsyourwish.pojo;
+package com.peppedalterio.whatsyourwish.util;
 
 public class WishStrings {
 
@@ -6,5 +6,8 @@ public class WishStrings {
 
     public static final String WISH_TITLE_KEY = "TITOLO";
     public static final String WISH_DESCRIPTION_KEY = "DESCRIZIONE";
+
+    public static final String WISH_ASSIGNEE = "INCARICATO";
+    public static final String PROCESSING_WISH_SINCE = "DATA_IN_LAVORAZIONE";
 
 }

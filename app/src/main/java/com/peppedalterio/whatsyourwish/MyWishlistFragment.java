@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -19,18 +20,62 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.Manifest;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.firebase.database.*;
-import com.peppedalterio.whatsyourwish.pojo.WishStrings;
+import com.peppedalterio.whatsyourwish.util.InternetConnection;
+import com.peppedalterio.whatsyourwish.util.WishStrings;
 
 
 public class MyWishlistFragment extends Fragment {
 
+    public static final int MIN_REFRESH_RATE = 5000;
+    private long lastRefreshTime = 0;
     private DatabaseReference dbRef;
     private String simNumber;
-    private ArrayAdapter<String> adapter;
+    private ArrayAdapter<String> wishListAdapter;
+    private ChildEventListener childEventListener;
+
+    /*
+     * Action to be performed if the client disconnects from the Internet
+     */
+    private void disconnectedActionMethod() {
+        Toast.makeText(getContext(), getString(R.string.toast_no_internet), Toast.LENGTH_SHORT).show();
+
+        wishListAdapter.clear();
+
+        if(getActivity()!=null) {
+            getActivity().findViewById(R.id.mylistnointernettextview).setVisibility(View.VISIBLE);
+            getActivity().findViewById(R.id.refresh_no_internet_button).setVisibility(View.VISIBLE);
+        }
+    }
+
+    /*
+     * Action to be performed if the client connects again to the Internet
+     */
+    private void connectedActionMethod() {
+        if(getActivity()!=null) {
+            getActivity().findViewById(R.id.mylistnointernettextview).setVisibility(View.INVISIBLE);
+            getActivity().findViewById(R.id.refresh_no_internet_button).setVisibility(View.INVISIBLE);
+        }
+    }
+
+    /*
+     * This method check if internet connection is available
+     */
+    private boolean checkInternetConnection() {
+
+        boolean isConnected = InternetConnection.checkForInternetConnection(getContext());
+
+        if (isConnected)
+            connectedActionMethod();
+        else
+            disconnectedActionMethod();
+
+        return isConnected;
+    }
 
     @Nullable
     @Override
@@ -49,8 +94,8 @@ public class MyWishlistFragment extends Fragment {
 
         ListView listView = getActivity().findViewById(R.id.mywishlistrv);
 
-        adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1);
-        listView.setAdapter(adapter);
+        wishListAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1);
+        listView.setAdapter(wishListAdapter);
 
         TelephonyManager telemamanger = (TelephonyManager) getActivity().getSystemService(Context.TELEPHONY_SERVICE);
 
@@ -64,66 +109,16 @@ public class MyWishlistFragment extends Fragment {
 
             Log.d("SIM_NUMBER", "num=" + simNumber);
 
-            FirebaseDatabase database = FirebaseDatabase.getInstance();
-            dbRef = database.getReference(simNumber);
+            Button refreshButton = getActivity().findViewById(R.id.refresh_no_internet_button);
+            refreshButton.setOnClickListener((View v) -> refreshWishListFromDB(listView));
 
-            dbRef.addChildEventListener(new ChildEventListener() {
-                @Override
-                public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-                    Log.d("ADD", "added: " + dataSnapshot.getValue());
-
-                    String str = "";
-
-                    String title = dataSnapshot.child(WishStrings.WISH_TITLE_KEY).getValue(String.class);
-                    String description = dataSnapshot.child(WishStrings.WISH_DESCRIPTION_KEY).getValue(String.class);
-                    str += title + WishStrings.SEPARATOR_TOKEN + description;
-
-                    adapter.add(str);
-
-                }
-
-                @Override
-                public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                    Log.d("CHANGE", "changed: " + dataSnapshot.getValue());
-                }
-
-                @Override
-                public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                    Log.d("REMOVE", "removed" + dataSnapshot.child(WishStrings.WISH_TITLE_KEY).getValue(String.class));
-
-                    String str = dataSnapshot.child(WishStrings.WISH_TITLE_KEY).getValue(String.class) + WishStrings.SEPARATOR_TOKEN +
-                            dataSnapshot.child(WishStrings.WISH_DESCRIPTION_KEY).getValue(String.class);
-
-                    adapter.remove(str);
-
-                }
-
-                @Override
-                public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                    Log.d("CHANGE", "changed: " + dataSnapshot.getValue());
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                }
-            });
+            FloatingActionButton refreshFloatingButton = getActivity().findViewById(R.id.refresh_floating_button);
+            refreshFloatingButton.setOnClickListener((v) -> refreshWishListFromDB(listView));
 
             FloatingActionButton actionButton = getActivity().findViewById(R.id.floatingActionButton);
             actionButton.setOnClickListener((View v) -> addAWish());
 
-            listView.setOnItemClickListener(
-                    (parent, view, position, id) ->
-                            Toast.makeText(getContext(), getString(R.string.toast_long_press_to_delete_wish),
-                                    Toast.LENGTH_SHORT).show()
-            );
-
-            listView.setOnItemLongClickListener((parent, view, position, id) -> {
-                Log.d("DEBUG", "long_click:" + parent.getItemAtPosition(position).toString());
-                onItemLongClick(parent.getItemAtPosition(position).toString());
-                return true;
-            });
+            refreshWishListFromDB(listView);
 
         } else {
 
@@ -133,10 +128,88 @@ public class MyWishlistFragment extends Fragment {
             FloatingActionButton actionButton = getActivity().findViewById(R.id.floatingActionButton);
             actionButton.setOnClickListener((View v) ->
                     Toast.makeText(getContext(), getString(R.string.toast_no_sim_number),
-                    Toast.LENGTH_LONG).show());
+                            Toast.LENGTH_LONG).show());
 
         }
 
+    }
+
+    private void refreshWishListFromDB(ListView listView) {
+
+        if (SystemClock.elapsedRealtime() - lastRefreshTime < MIN_REFRESH_RATE){
+            Toast.makeText(getContext(), getString(R.string.toast_refresh_rate),
+                    Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        if(childEventListener!=null)
+            dbRef.removeEventListener(childEventListener);
+
+        lastRefreshTime = SystemClock.elapsedRealtime();
+
+        wishListAdapter.clear();
+
+        if( !checkInternetConnection() ) return;
+
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        dbRef = database.getReference(simNumber);
+
+        childEventListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                Log.d("ADD", "added: " + dataSnapshot.getValue());
+
+                String str = "";
+
+                String title = dataSnapshot.child(WishStrings.WISH_TITLE_KEY).getValue(String.class);
+                String description = dataSnapshot.child(WishStrings.WISH_DESCRIPTION_KEY).getValue(String.class);
+                str += title + WishStrings.SEPARATOR_TOKEN + description;
+
+                wishListAdapter.add(str);
+
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                Log.d("CHANGE", "changed: " + dataSnapshot.getValue());
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+                Log.d("REMOVE", "removed" + dataSnapshot.child(WishStrings.WISH_TITLE_KEY).getValue(String.class));
+
+                String str = dataSnapshot.child(WishStrings.WISH_TITLE_KEY).getValue(String.class) + WishStrings.SEPARATOR_TOKEN +
+                        dataSnapshot.child(WishStrings.WISH_DESCRIPTION_KEY).getValue(String.class);
+
+                wishListAdapter.remove(str);
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                Log.d("CHANGE", "changed: " + dataSnapshot.getValue());
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        };
+
+        dbRef.addChildEventListener(childEventListener);
+
+        listView.setOnItemClickListener(
+                (parent, view, position, id) ->
+                        Toast.makeText(getContext(), getString(R.string.toast_long_press_to_delete_wish),
+                                Toast.LENGTH_SHORT).show()
+        );
+
+        listView.setOnItemLongClickListener((parent, view, position, id) -> {
+            Log.d("DEBUG", "long_click:" + parent.getItemAtPosition(position).toString());
+            onItemLongClick(parent.getItemAtPosition(position).toString());
+            return true;
+        });
     }
 
     /**
@@ -156,23 +229,28 @@ public class MyWishlistFragment extends Fragment {
         builder.setCancelable(false);
 
         builder.setPositiveButton(getString(R.string.dialog_yes), (DialogInterface dialog, int which) -> {
-                Query query = dbRef.orderByChild(WishStrings.WISH_TITLE_KEY).equalTo(wishData.split(WishStrings.SEPARATOR_TOKEN)[0]);
 
-                query.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        for (DataSnapshot ds: dataSnapshot.getChildren()) {
-                            ds.getRef().removeValue();
-                        }
-                    }
+        if(!checkInternetConnection())
+            return;
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                        Log.e("TAG", "onCancelled", databaseError.toException());
-                    }
-                });
+        Query query = dbRef.orderByChild(WishStrings.WISH_TITLE_KEY).equalTo(wishData.split(WishStrings.SEPARATOR_TOKEN)[0]).limitToFirst(1);
 
-                Toast.makeText(getContext(), getString(R.string.remove_wish_ok), Toast.LENGTH_SHORT).show();
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.getChildren().iterator().hasNext()) {
+                    DataSnapshot ds = dataSnapshot.getChildren().iterator().next();
+                    ds.getRef().removeValue();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e("TAG", "onCancelled", databaseError.toException());
+            }
+        });
+
+        Toast.makeText(getContext(), getString(R.string.remove_wish_ok), Toast.LENGTH_SHORT).show();
 
         });
 

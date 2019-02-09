@@ -2,7 +2,6 @@ package com.peppedalterio.whatsyourwish;
 
 import android.content.Intent;
 import android.database.Cursor;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
@@ -10,26 +9,20 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.telephony.PhoneNumberUtils;
 import android.text.Editable;
-import android.text.Html;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 
-import com.google.android.gms.common.util.NumberUtils;
-import com.peppedalterio.whatsyourwish.pojo.Contact;
-import com.peppedalterio.whatsyourwish.pojo.WishStrings;
+import com.peppedalterio.whatsyourwish.util.Contact;
+import com.peppedalterio.whatsyourwish.util.WishStrings;
 
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 
 public class ContactsListFragment extends Fragment {
@@ -126,25 +119,27 @@ public class ContactsListFragment extends Fragment {
 
         String name, phoneNumber, lastNumber;
         boolean duplicate;
+        int i;
 
         while (contactList.moveToNext())
         {
             name = contactList.getString(contactList.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
             phoneNumber = contactList.getString(contactList.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
 
-
             /*
-                Comparing the number with the last inserted to check if it's a duplicate
-                written with another "format" (eg. +39 123 456 7890 and 1234567890)
+                Compare the number with last inserted ones (with the same contact's name)
+                to check if it's a duplicate written with another format
+                (eg. +39 123 456 7890 and 1234567890).
              */
+            i=0;
             duplicate = false;
-            if( numbersList.size()>0 ) {
+            while( (listItems.size()-1-i)>=0 &&
+                    listItems.get(listItems.size()-1-i).startsWith(name+WishStrings.SEPARATOR_TOKEN) ) {
 
-                lastNumber = numbersList.get(numbersList.size()-1);
-
-                if(PhoneNumberUtils.compare(lastNumber, phoneNumber))
+                if(PhoneNumberUtils.compare(numbersList.get(numbersList.size()-1-i), phoneNumber))
                     duplicate = true;
 
+                i++;
             }
 
             if(!duplicate) {
@@ -163,7 +158,7 @@ public class ContactsListFragment extends Fragment {
      * It shows the activity containing selected contact's wishlist.
      */
     private void mostraListaUtente(Contact contact) {
-        Intent myIntent = new Intent(getActivity(), WishlistUtenteActivity.class);
+        Intent myIntent = new Intent(getActivity(), UserWishlistActivity.class);
         myIntent.putExtra("contact", contact);
         this.startActivity(myIntent);
     }
