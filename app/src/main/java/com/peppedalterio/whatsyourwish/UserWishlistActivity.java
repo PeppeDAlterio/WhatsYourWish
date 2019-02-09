@@ -260,22 +260,25 @@ public class UserWishlistActivity extends AppCompatActivity {
 
                 Log.d("ADD", "added: " + dataSnapshot.getValue());
 
-                String str;
+                String wishDataStr;
 
                 String title = dataSnapshot.child(WishStrings.WISH_TITLE_KEY).getValue(String.class);
                 String description = dataSnapshot.child(WishStrings.WISH_DESCRIPTION_KEY).getValue(String.class);
                 String assignee = dataSnapshot.child(WishStrings.WISH_ASSIGNEE).getValue(String.class);
                 String processingDate = dataSnapshot.child(WishStrings.PROCESSING_WISH_SINCE).getValue(String.class);
 
-                str =   title +
-                        WishStrings.SEPARATOR_TOKEN +
-                        getString(R.string.userwishlist_description) + ": " + description;
+                wishDataStr = title;
 
-                if(assignee!=null && !assignee.isEmpty()) {
-                    str += appendAssignee(assignee, processingDate);
+                if (description!=null && !description.isEmpty()) {
+                    wishDataStr +=  WishStrings.SEPARATOR_TOKEN +
+                                    getString(R.string.userwishlist_description) + ": " + description;
                 }
 
-                adapter.add(str);
+                if(assignee!=null && !assignee.isEmpty()) {
+                    wishDataStr += appendAssignee(assignee, processingDate);
+                }
+
+                adapter.add(wishDataStr);
 
             }
 
@@ -308,6 +311,11 @@ public class UserWishlistActivity extends AppCompatActivity {
 
     }
 
+    /**
+        This method appends assignee's information to the listview item for the wish:
+        assignee: phone number of the assignee
+        processingDate: the date on which it was taken over
+     */
     @NonNull
     private String appendAssignee(String assignee, String processingDate) {
         return WishStrings.SEPARATOR_TOKEN +
