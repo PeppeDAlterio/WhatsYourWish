@@ -1,5 +1,6 @@
 package com.peppedalterio.whatsyourwish;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -43,6 +44,7 @@ public class UserWishlistActivity extends AppCompatActivity {
 
     private String simNumber;
 
+    @SuppressLint("HardwareIds")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -119,38 +121,11 @@ public class UserWishlistActivity extends AppCompatActivity {
             return;*/
 
         String splitData[] = wishData.split(WishStrings.SEPARATOR_TOKEN);
-        String assignee;
-        String assigneeDate;
-        String newItemStr;
+
 
         if(simNumber==null || simNumber.isEmpty()) {
             Toast.makeText(getApplicationContext(), getString(R.string.toast_no_sim_number), Toast.LENGTH_SHORT).show();
             return;
-        }
-
-        /* case assigned to another person -> do nothing */
-        if (splitData.length>2 && !splitData[2].contains(simNumber) ) {
-            Log.d("ASSIGNEE", "case_1 - simNumber: " + simNumber + "| splitted: " + splitData[2]);
-            Toast.makeText(getApplicationContext(), getString(R.string.toast_assigned_to_another_one), Toast.LENGTH_SHORT).show();
-            return;
-        }
-        /* case assigned to yourself -> delete the assignment */
-        else if (splitData.length>2 && splitData[2].contains(simNumber)) {
-            Log.d("ASSIGNEE", "case_2");
-            assignee = "";
-            assigneeDate = "";
-            newItemStr =    splitData[0] + WishStrings.SEPARATOR_TOKEN +
-                            splitData[1];
-        }
-        /* case not assigned -> assign to yourself */
-        else {
-            Log.d("ASSIGNEE", "case_3");
-            Date todayDate = Calendar.getInstance().getTime();
-            SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
-            assigneeDate = formatter.format(todayDate);
-            assignee = simNumber;
-
-            newItemStr = wishData.concat(appendAssignee(assignee, assigneeDate));
         }
 
         DatabaseReference dbRef = database.getReference(effectiveDbNumber);
@@ -162,15 +137,56 @@ public class UserWishlistActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.getChildren().iterator().hasNext()) {
                     DataSnapshot ds = dataSnapshot.getChildren().iterator().next();
+                    String key = (String) ds.child(WishStrings.WISH_ASSIGNEE).getValue();
+
+                    /*
+                        Taking current status of the assignee to decide if it's possible to
+                        self-assign the wish.
+                        case 1: assigned to another person -> do nothing
+                        case 2: assigned to yourself -> delete the assignment
+                        case 3: not assigned -> assign to yourself
+                     */
+
+                    String assignee;
+                    String assigneeDate;
+                    String newItemStr;
+
+                    /* case 1: assigned to another person -> do nothing */
+                    if ( key!=null && !key.isEmpty() && !PhoneNumberUtils.compare(simNumber, key)) {
+                        Log.d("ASSIGNEE", "case_1 - simNumber: " + simNumber + "| assignee: " + key);
+                        Toast.makeText(getApplicationContext(), getString(R.string.toast_assigned_to_another_one), Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    /* case 2: assigned to yourself -> delete the assignment */
+                    else if ( key!=null && !key.isEmpty() && PhoneNumberUtils.compare(simNumber, key)) {
+                        Log.d("ASSIGNEE", "case_2");
+                        assignee = "";
+                        assigneeDate = "";
+                        newItemStr =    splitData[0] + WishStrings.SEPARATOR_TOKEN +
+                                        splitData[1];
+                    }
+                    /* case 3: not assigned -> assign to yourself */
+                    else {
+                        Log.d("ASSIGNEE", "case_3");
+                        Date todayDate = Calendar.getInstance().getTime();
+                        @SuppressLint("SimpleDateFormat") SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+                        assigneeDate = formatter.format(todayDate);
+                        assignee = simNumber;
+
+                        newItemStr = wishData.concat(appendAssignee(assignee, assigneeDate));
+                    }
+                    /* apply the change */
                     ds.child(WishStrings.WISH_ASSIGNEE).getRef().setValue(assignee);
                     ds.child(WishStrings.PROCESSING_WISH_SINCE).getRef().setValue(assigneeDate);
                     adapter.remove(wishData);
                     adapter.insert(newItemStr, pos);
+                    /* show and informative toast */
                     if(assignee.isEmpty()) {
                         Toast.makeText(getApplicationContext(), getString(R.string.toast_remove_assignment), Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(getApplicationContext(), getString(R.string.toast_self_assign), Toast.LENGTH_SHORT).show();
                     }
+
                 }
             }
 
