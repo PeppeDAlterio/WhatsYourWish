@@ -1,4 +1,4 @@
-package com.peppedalterio.whatsyourwish;
+package com.peppedalterio.whatsyourwish.activity;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
@@ -11,6 +11,11 @@ import android.support.v7.app.AppCompatActivity;
 
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+
+import com.peppedalterio.whatsyourwish.activity.fragment.ContactsListFragment;
+import com.peppedalterio.whatsyourwish.activity.fragment.MyWishlistFragment;
+import com.peppedalterio.whatsyourwish.R;
+import com.peppedalterio.whatsyourwish.activity.adapter.SectionsPageAdapter;
 
 public class MainActivity extends AppCompatActivity {
 

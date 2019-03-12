@@ -1,4 +1,4 @@
-package com.peppedalterio.whatsyourwish;
+package com.peppedalterio.whatsyourwish.activity;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -24,6 +24,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.peppedalterio.whatsyourwish.R;
 import com.peppedalterio.whatsyourwish.util.Contact;
 import com.peppedalterio.whatsyourwish.util.InternetConnection;
 import com.peppedalterio.whatsyourwish.util.WishStrings;
