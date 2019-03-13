@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -34,7 +35,6 @@ public class MyWishlistFragment extends Fragment {
 
     public static final int MIN_REFRESH_RATE = 5000;
     private long lastRefreshTime = 0;
-    private DatabaseReference dbRef;
     private String simNumber;
     private ArrayAdapter<String> wishListAdapter;
     private ChildEventListener childEventListener;
@@ -106,34 +106,33 @@ public class MyWishlistFragment extends Fragment {
 
         simNumber = telemamanger.getLine1Number();
 
-        MyWishlistModel wishlistModel = new MyWishlistModel(simNumber, wishListAdapter,
-                                                            childEventListener, listView);
+        MyWishlistModel wishlistModel = new MyWishlistModel(simNumber, wishListAdapter, listView);
 
         if(!simNumber.isEmpty()) {
 
             Log.d("SIM_NUMBER", "num=" + simNumber);
 
             Button refreshButton = getActivity().findViewById(com.peppedalterio.whatsyourwish.R.id.refresh_no_internet_button);
-            refreshButton.setOnClickListener((View v) -> wishlistModel.refreshWishListFromDB());
+            refreshButton.setOnClickListener( (View v) -> refreshWishlistFromDB(wishlistModel, listView) );
 
             FloatingActionButton refreshFloatingButton = getActivity().findViewById(com.peppedalterio.whatsyourwish.R.id.refresh_floating_button);
-            refreshFloatingButton.setOnClickListener((v) -> wishlistModel.refreshWishListFromDB());
+            refreshFloatingButton.setOnClickListener( (View v) -> refreshWishlistFromDB(wishlistModel, listView) );
 
             FloatingActionButton actionButton = getActivity().findViewById(com.peppedalterio.whatsyourwish.R.id.floatingActionButton);
             actionButton.setOnClickListener((View v) -> addAWish());
 
-            wishlistModel.refreshWishListFromDB();
+            refreshWishlistFromDB(wishlistModel, listView);
 
-            listView.setOnItemClickListener( (parent, view, position, id) ->
-                        Toast.makeText(getContext(), getString(R.string.toast_long_press_to_delete_wish),
-                                Toast.LENGTH_SHORT).show()
-            );
-
-            listView.setOnItemLongClickListener((parent, view, position, id) -> {
-                Log.d("DEBUG", "long_click:" + parent.getItemAtPosition(position).toString());
-                onItemLongClick(parent.getItemAtPosition(position).toString());
-                return true;
-            });
+//            listView.setOnItemClickListener( (parent, view, position, id) ->
+//                        Toast.makeText(getContext(), getString(R.string.toast_long_press_to_delete_wish),
+//                                Toast.LENGTH_SHORT).show()
+//            );
+//
+//            listView.setOnItemLongClickListener((parent, view, position, id) -> {
+//                Log.d("DEBUG", "long_click:" + parent.getItemAtPosition(position).toString());
+//                onItemLongClick(parent.getItemAtPosition(position).toString());
+//                return true;
+//            });
 
         } else {
 
@@ -149,83 +148,29 @@ public class MyWishlistFragment extends Fragment {
 
     }
 
-//    private void refreshWishListFromDB(ListView listView) {
+    private void refreshWishlistFromDB(MyWishlistModel wishlistModel, ListView wishlistListView) {
 
-//        if (SystemClock.elapsedRealtime() - lastRefreshTime < MIN_REFRESH_RATE){
-//            Toast.makeText(getContext(), getString(R.string.toast_refresh_rate),
-//                    Toast.LENGTH_LONG).show();
-//            return;
-//        }
-//
-//        if(childEventListener!=null)
-//            dbRef.removeEventListener(childEventListener);
-//
-//        lastRefreshTime = SystemClock.elapsedRealtime();
-//
-//        wishListAdapter.clear();
-//
-//        if( !checkInternetConnection() ) return;
-//
-//        FirebaseDatabase database = FirebaseDatabase.getInstance();
-//        dbRef = database.getReference(simNumber);
-//
-//        childEventListener = new ChildEventListener() {
-//            @Override
-//            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-//
-//                Log.d("ADD", "added: " + dataSnapshot.getValue());
-//
-//                String str = "";
-//
-//                String title = dataSnapshot.child(WishStrings.WISH_TITLE_KEY).getValue(String.class);
-//                String description = dataSnapshot.child(WishStrings.WISH_DESCRIPTION_KEY).getValue(String.class);
-//                str += title + WishStrings.SEPARATOR_TOKEN + description;
-//
-//                wishListAdapter.add(str);
-//
-//            }
-//
-//            @Override
-//            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-//                Log.d("CHANGE", "changed: " + dataSnapshot.getValue());
-//            }
-//
-//            @Override
-//            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-//                Log.d("REMOVE", "removed" + dataSnapshot.child(WishStrings.WISH_TITLE_KEY).getValue(String.class));
-//
-//                String str = dataSnapshot.child(WishStrings.WISH_TITLE_KEY).getValue(String.class) + WishStrings.SEPARATOR_TOKEN +
-//                        dataSnapshot.child(WishStrings.WISH_DESCRIPTION_KEY).getValue(String.class);
-//
-//                wishListAdapter.remove(str);
-//
-//            }
-//
-//            @Override
-//            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-//                Log.d("CHANGE", "changed: " + dataSnapshot.getValue());
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//            }
-//        };
-//
-//        dbRef.addChildEventListener(childEventListener);
-//
-//        listView.setOnItemClickListener(
-//                (parent, view, position, id) ->
-//                        Toast.makeText(getContext(), getString(R.string.toast_long_press_to_delete_wish),
-//                                Toast.LENGTH_SHORT).show()
-//        );
-//
-//        listView.setOnItemLongClickListener((parent, view, position, id) -> {
-//            Log.d("DEBUG", "long_click:" + parent.getItemAtPosition(position).toString());
-//            onItemLongClick(parent.getItemAtPosition(position).toString());
-//            return true;
-//        });
-//  }
+        if (SystemClock.elapsedRealtime() - lastRefreshTime < MIN_REFRESH_RATE){
+            Toast.makeText(getContext(), getString(R.string.toast_refresh_rate),
+                Toast.LENGTH_LONG).show();
+        } else {
+            lastRefreshTime = SystemClock.elapsedRealtime();
+            wishlistModel.refreshWishListFromDB();
+        }
+
+        wishlistListView.setOnItemClickListener(
+                (parent, view, position, id) ->
+                        Toast.makeText(getContext(), getString(R.string.toast_long_press_to_delete_wish),
+                                Toast.LENGTH_SHORT).show()
+        );
+
+        wishlistListView.setOnItemLongClickListener((parent, view, position, id) -> {
+            //Log.d("DEBUG", "long_click:" + parent.getItemAtPosition(position).toString());
+            onItemLongClick(parent.getItemAtPosition(position).toString());
+            return true;
+        });
+
+    }
 
     /**
      * This method defines the action to be performed on any mywishlistrv item long click.

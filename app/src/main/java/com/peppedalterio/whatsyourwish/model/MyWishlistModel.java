@@ -24,19 +24,15 @@ import java.util.Map;
 
 public class MyWishlistModel {
 
-    public static final int MIN_REFRESH_RATE = 5000;
-    private long lastRefreshTime = 0;
     private DatabaseReference dbRef;
     private String simNumber;
     private ArrayAdapter<String> wishListAdapter;
     private ChildEventListener childEventListener;
     private ListView listView;
 
-    public MyWishlistModel(String simNumber, ArrayAdapter<String> wishListAdapter,
-                           ChildEventListener childEventListener, ListView listView) {
+    public MyWishlistModel(String simNumber, ArrayAdapter<String> wishListAdapter, ListView listView) {
         this.simNumber = simNumber;
         this.wishListAdapter = wishListAdapter;
-        this.childEventListener = childEventListener;
         this.listView = listView;
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -53,16 +49,8 @@ public class MyWishlistModel {
 
     public void refreshWishListFromDB() {
 
-        if (SystemClock.elapsedRealtime() - lastRefreshTime < MIN_REFRESH_RATE){
-            /*fixme Toast.makeText(getContext(), getString(R.string.toast_refresh_rate),
-                    Toast.LENGTH_LONG).show();*/
-            return;
-        }
-
         if(childEventListener!=null)
             dbRef.removeEventListener(childEventListener);
-
-        lastRefreshTime = SystemClock.elapsedRealtime();
 
         wishListAdapter.clear();
 
@@ -111,17 +99,17 @@ public class MyWishlistModel {
 
         dbRef.addChildEventListener(childEventListener);
 
-        listView.setOnItemClickListener(
-                (parent, view, position, id) -> Log.d("abc", "test")
-                       /* Toast.makeText(getContext(), getString(R.string.toast_long_press_to_delete_wish),
-                                Toast.LENGTH_SHORT).show()*/
-        );
-
-        listView.setOnItemLongClickListener((parent, view, position, id) -> {
-            Log.d("DEBUG", "long_click:" + parent.getItemAtPosition(position).toString());
-            //onItemLongClick(parent.getItemAtPosition(position).toString());
-            return true;
-        });
+//        listView.setOnItemClickListener(
+//                (parent, view, position, id) -> Log.d("abc", "test")
+//                       /* Toast.makeText(getContext(), getString(R.string.toast_long_press_to_delete_wish),
+//                                Toast.LENGTH_SHORT).show()*/
+//        );
+//
+//        listView.setOnItemLongClickListener((parent, view, position, id) -> {
+//            Log.d("DEBUG", "long_click:" + parent.getItemAtPosition(position).toString());
+//            //onItemLongClick(parent.getItemAtPosition(position).toString());
+//            return true;
+//        });
     }
 
     public void removeWishlistItem(String wishData) {
