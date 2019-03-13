@@ -1,4 +1,4 @@
-package com.peppedalterio.whatsyourwish;
+package com.peppedalterio.whatsyourwish.activity;
 
 import org.junit.jupiter.api.*;
 

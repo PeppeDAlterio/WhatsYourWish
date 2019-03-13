@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 
+import com.peppedalterio.whatsyourwish.activity.MainActivity;
 import com.peppedalterio.whatsyourwish.util.WishStrings;
 import com.peppedalterio.whatsyourwish.utils.ToastMatcher;
 
