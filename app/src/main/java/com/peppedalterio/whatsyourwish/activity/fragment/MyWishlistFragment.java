@@ -113,15 +113,15 @@ public class MyWishlistFragment extends Fragment {
             Log.d("SIM_NUMBER", "num=" + simNumber);
 
             Button refreshButton = getActivity().findViewById(com.peppedalterio.whatsyourwish.R.id.refresh_no_internet_button);
-            refreshButton.setOnClickListener( (View v) -> refreshWishlistFromDB(wishlistModel, listView) );
+            refreshButton.setOnClickListener( (View v) -> refreshMyWishlist(wishlistModel, listView) );
 
             FloatingActionButton refreshFloatingButton = getActivity().findViewById(com.peppedalterio.whatsyourwish.R.id.refresh_floating_button);
-            refreshFloatingButton.setOnClickListener( (View v) -> refreshWishlistFromDB(wishlistModel, listView) );
+            refreshFloatingButton.setOnClickListener( (View v) -> refreshMyWishlist(wishlistModel, listView) );
 
             FloatingActionButton actionButton = getActivity().findViewById(com.peppedalterio.whatsyourwish.R.id.floatingActionButton);
             actionButton.setOnClickListener((View v) -> addAWish());
 
-            refreshWishlistFromDB(wishlistModel, listView);
+            refreshMyWishlist(wishlistModel, listView);
 
         } else {
 
@@ -137,14 +137,14 @@ public class MyWishlistFragment extends Fragment {
 
     }
 
-    private void refreshWishlistFromDB(MyWishlistModel wishlistModel, ListView wishlistListView) {
+    private void refreshMyWishlist(MyWishlistModel wishlistModel, ListView wishlistListView) {
 
         if (SystemClock.elapsedRealtime() - lastRefreshTime < MIN_REFRESH_RATE){
             Toast.makeText(getContext(), getString(R.string.toast_refresh_rate),
                 Toast.LENGTH_LONG).show();
         } else {
             lastRefreshTime = SystemClock.elapsedRealtime();
-            wishlistModel.refreshWishListFromDB();
+            wishlistModel.refreshMyWishList();
         }
 
         wishlistListView.setOnItemClickListener(

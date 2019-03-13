@@ -25,7 +25,7 @@ public class MyWishlistModel {
     private DatabaseReference dbRef;
     private String simNumber;
     private ArrayAdapter<String> wishListAdapter;
-    private ChildEventListener childEventListener;
+    private ChildEventListener childEventListener; //db
 
     public MyWishlistModel(String simNumber, ArrayAdapter<String> wishListAdapter) {
         this.simNumber = simNumber;
@@ -43,7 +43,7 @@ public class MyWishlistModel {
         dbRef = database.getReference(simNumber);
     }
 
-    public void refreshWishListFromDB() {
+    public void refreshMyWishList() {
 
         if(childEventListener!=null)
             dbRef.removeEventListener(childEventListener);
