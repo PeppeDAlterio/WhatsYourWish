@@ -106,7 +106,7 @@ public class MyWishlistFragment extends Fragment {
 
         simNumber = telemamanger.getLine1Number();
 
-        MyWishlistModel wishlistModel = new MyWishlistModel(simNumber, wishListAdapter, listView);
+        MyWishlistModel wishlistModel = new MyWishlistModel(simNumber, wishListAdapter);
 
         if(!simNumber.isEmpty()) {
 
@@ -122,17 +122,6 @@ public class MyWishlistFragment extends Fragment {
             actionButton.setOnClickListener((View v) -> addAWish());
 
             refreshWishlistFromDB(wishlistModel, listView);
-
-//            listView.setOnItemClickListener( (parent, view, position, id) ->
-//                        Toast.makeText(getContext(), getString(R.string.toast_long_press_to_delete_wish),
-//                                Toast.LENGTH_SHORT).show()
-//            );
-//
-//            listView.setOnItemLongClickListener((parent, view, position, id) -> {
-//                Log.d("DEBUG", "long_click:" + parent.getItemAtPosition(position).toString());
-//                onItemLongClick(parent.getItemAtPosition(position).toString());
-//                return true;
-//            });
 
         } else {
 
@@ -165,7 +154,6 @@ public class MyWishlistFragment extends Fragment {
         );
 
         wishlistListView.setOnItemLongClickListener((parent, view, position, id) -> {
-            //Log.d("DEBUG", "long_click:" + parent.getItemAtPosition(position).toString());
             onItemLongClick(parent.getItemAtPosition(position).toString());
             return true;
         });

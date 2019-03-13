@@ -1,12 +1,10 @@
 package com.peppedalterio.whatsyourwish.model;
 
 import android.app.Activity;
-import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.firebase.database.ChildEventListener;
@@ -28,12 +26,10 @@ public class MyWishlistModel {
     private String simNumber;
     private ArrayAdapter<String> wishListAdapter;
     private ChildEventListener childEventListener;
-    private ListView listView;
 
-    public MyWishlistModel(String simNumber, ArrayAdapter<String> wishListAdapter, ListView listView) {
+    public MyWishlistModel(String simNumber, ArrayAdapter<String> wishListAdapter) {
         this.simNumber = simNumber;
         this.wishListAdapter = wishListAdapter;
-        this.listView = listView;
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         dbRef = database.getReference(simNumber);
@@ -99,17 +95,6 @@ public class MyWishlistModel {
 
         dbRef.addChildEventListener(childEventListener);
 
-//        listView.setOnItemClickListener(
-//                (parent, view, position, id) -> Log.d("abc", "test")
-//                       /* Toast.makeText(getContext(), getString(R.string.toast_long_press_to_delete_wish),
-//                                Toast.LENGTH_SHORT).show()*/
-//        );
-//
-//        listView.setOnItemLongClickListener((parent, view, position, id) -> {
-//            Log.d("DEBUG", "long_click:" + parent.getItemAtPosition(position).toString());
-//            //onItemLongClick(parent.getItemAtPosition(position).toString());
-//            return true;
-//        });
     }
 
     public void removeWishlistItem(String wishData) {
