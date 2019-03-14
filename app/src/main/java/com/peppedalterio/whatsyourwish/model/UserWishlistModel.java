@@ -21,6 +21,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.peppedalterio.whatsyourwish.R;
 import com.peppedalterio.whatsyourwish.util.WishStrings;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -32,7 +33,7 @@ public class UserWishlistModel {
     private String local_self_assigned;
     private String local_assign_date;
     private String local_description;
-    private FirebaseDatabase database = FirebaseDatabase.getInstance();
+    private FirebaseDatabase database;// = FirebaseDatabase.getInstance();
     private DatabaseReference dbRef;
 
     private ArrayAdapter<String> listViewAdapter;
@@ -46,9 +47,21 @@ public class UserWishlistModel {
         local_assign_date = assign_date;
         local_description = description;
 
+        database = FirebaseDatabase.getInstance();
+
+    }
+
+    UserWishlistModel(String self_assigned, String assign_date, String description) {
+        local_self_assigned = self_assigned;
+        local_assign_date = assign_date;
+        local_description = description;
     }
 
     public void getUserWishlist(Activity activity) {
+
+        if (contactNumber==null) {
+            return;
+        }
 
         /*
             if the effective (number from the db) of the given contact number is already obtained
@@ -121,6 +134,7 @@ public class UserWishlistModel {
                 String processingDate = dataSnapshot.child(WishStrings.PROCESSING_WISH_SINCE).getValue(String.class);
 
                 if (title!=null) {
+                    // no try-catch 'cause it's already null-protected (title)
                     wishDataStr = formatWishDataStr(title, description, assignee, processingDate);
                 }
                 listViewAdapter.add(wishDataStr);
@@ -163,6 +177,10 @@ public class UserWishlistModel {
      */
     public void assignToAWishRequest(String mySimNumber, String wishTitle,
                               String wishFormattedData, int pos, Activity activity) {
+
+        if (contactNumber==null) {
+            return;
+        }
 
         /*
             if the effective (number from the db) of the given contact number is already obtained
@@ -217,6 +235,7 @@ public class UserWishlistModel {
      * @param activity activity to show Toasts
      */
     private void assignToAWish(String mySimNumber, String wishTitle, String wishFormattedData, int pos, Activity activity) {
+
         dbRef = database.getReference(contactDBNumber);
 
         Query query = dbRef.orderByChild(WishStrings.WISH_TITLE_KEY).equalTo(wishTitle).limitToFirst(1);
@@ -250,6 +269,7 @@ public class UserWishlistModel {
                         Toast.makeText(activity.getApplicationContext(), activity.getString(R.string.toast_assigned_to_another_one), Toast.LENGTH_SHORT).show();
                         // updating displayed info with current assignee if currently not displayed
                         if(!wishFormattedData.contains(": "+currentAssignee+WishStrings.SEPARATOR_TOKEN)) {
+                            // we don't need a null-test of wish title because we're already sure that's not null (found in db)
                             newWishItemStr = formatWishDataStr(wishTitle, wishDescription, currentAssignee, currentAssigneeDate);
                             listViewAdapter.remove(wishFormattedData);
                             listViewAdapter.insert(newWishItemStr, pos);
@@ -265,11 +285,11 @@ public class UserWishlistModel {
                     /* case 3: not assigned -> assign to yourself */
                     else {
                         Log.d("ASSIGNEE", "case_3");
-                        Date todayDate = Calendar.getInstance().getTime();
+                        /*Date todayDate = Calendar.getInstance().getTime();
                         @SuppressLint("SimpleDateFormat") SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
-                        newAssigneeDate = formatter.format(todayDate);
+                        newAssigneeDate = formatter.format(todayDate);*/
+                        newAssigneeDate = null; //today
                         newAssignee = mySimNumber;
-                        //newWishItemStr = wishData.concat(appendAssignee(newAssignee, newAssigneeDate));
                     }
 
                     // format new wish list item string
@@ -299,30 +319,36 @@ public class UserWishlistModel {
     }
 
 
-    //TODO: JUnit test this method
     /**
      This method appends assignee's information to the listview item for the wish:
      assignee: phone number of the assignee
      processingDate: the date on which it was taken over
      */
-    @NonNull
-    private String appendAssignee(String assignee, String processingDate) {
+    String appendAssignee(String assignee, String processingDate) {
+
+        if ( (assignee==null || assignee.isEmpty()) || (!isValidDate(processingDate)) ) {
+            return "";
+        }
+
         return WishStrings.SEPARATOR_TOKEN +
                 local_self_assigned + ": " + assignee +
                 WishStrings.SEPARATOR_TOKEN +
                 local_assign_date + ": " + processingDate;
     }
 
-    //TODO: JUnit test this method
     /**
      * This methos formats the wish data String to be displayed into the list view.
      * @param title wish title
      * @param description wish description
      * @param assignee wish assignee
-     * @param processingDate date on which the assignee took over the wish
+     * @param processingDate date on which the assignee took over the wish. You can also pass null or empty for today's date
      * @return Formatted string for list view item for user wish list
      */
-    private String formatWishDataStr(@NonNull String title, String description, String assignee, String processingDate) {
+    String formatWishDataStr(String title, String description, String assignee, String processingDate) {
+
+        if(title==null) {
+            throw new RuntimeException("Title null while formatting wish data string");
+        }
 
         String wishDataStr;
 
@@ -334,10 +360,39 @@ public class UserWishlistModel {
         }
 
         if(assignee!=null && !assignee.isEmpty()) {
+            //if processing date is not a valid date AND we're gonna make the assignment -> today's date in dd-MM-yyyy format
+            if(!isValidDate(processingDate)) {
+                Date todayDate = Calendar.getInstance().getTime();
+                @SuppressLint("SimpleDateFormat") SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+                processingDate = formatter.format(todayDate);
+            }
             wishDataStr += appendAssignee(assignee, processingDate);
         }
 
         return wishDataStr;
     }
+
+    /**
+     * Method checks if the String is a valid date in pattern dd-MM-yyyy
+     * @param inDate date String to be checked
+     * @return true if valid, false otherwise
+     */
+    boolean isValidDate(String inDate) {
+
+        if (inDate==null || inDate.isEmpty()) {
+            return false;
+        }
+
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        dateFormat.setLenient(false); //strictly  match my pattern!
+        try {
+            dateFormat.parse(inDate.trim());
+        } catch (ParseException pe) {
+            return false;
+        }
+        return true;
+    }
+
+
 
 }
