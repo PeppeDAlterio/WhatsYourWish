@@ -285,10 +285,9 @@ public class UserWishlistModel {
                     /* case 3: not assigned -> assign to yourself */
                     else {
                         Log.d("ASSIGNEE", "case_3");
-                        /*Date todayDate = Calendar.getInstance().getTime();
+                        Date todayDate = Calendar.getInstance().getTime();
                         @SuppressLint("SimpleDateFormat") SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
-                        newAssigneeDate = formatter.format(todayDate);*/
-                        newAssigneeDate = null; //today
+                        newAssigneeDate = formatter.format(todayDate);
                         newAssignee = mySimNumber;
                     }
 

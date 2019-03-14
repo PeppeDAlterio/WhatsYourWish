@@ -54,6 +54,9 @@ public class WishlistTestSuite {
                     "android.permission.READ_CONTACTS",
                     "android.permission.READ_PHONE_STATE");
 
+    /**
+     * This test case needs a specific contact (see FAKE_CONTACT) in your contacts to be executed!!
+     */
     @Test
     public void userWithNoWishlistTest() {
         // Added a sleep statement to match the app's execution delay.
@@ -75,6 +78,9 @@ public class WishlistTestSuite {
                 .check(matches(isDisplayed()));
     }
 
+    /**
+     * This test case needs a specific contact (see AVD_CONTACT) in your contacts to be executed!!
+     */
     @Test
     public void userWithWishlistTest() {
 
