@@ -46,7 +46,7 @@ import static org.hamcrest.Matchers.is;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-public class WishAssignTest {
+public class WishAssignTestSuite {
 
     private static final String TEST_CONTACT_NUMBER = "01234567890123";
     @Rule
@@ -56,7 +56,7 @@ public class WishAssignTest {
      * Try to assign to a wish already assigned to another person
      */
     @Test
-    public void busyBusyTest() {
+    public void alreadyAssignedTest() {
         try {
             Thread.sleep(6000);
         } catch (InterruptedException e) {
