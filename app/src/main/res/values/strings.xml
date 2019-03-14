@@ -24,4 +24,12 @@
     <string name="my_wishlist_no_internet">No internet connection available. Please connect to the Internet.</string>
     <string name="button_refresh_no_internet">Refresh</string>
     <string name="toast_refresh_rate">Please wait a few seconds before refreshing again</string>
+    <string name="userwishlist_description">Description</string>
+    <string name="userwishlist_self_assigned">Self-assigned</string>
+    <string name="userwishlist_assign_date">Since (dd-mm-yyyy)</string>
+    <string name="toast_thiss_my_wishlist">To view your wishlist, please use the dedicated tab</string>
+    <string name="toast_self_assign">You\'ve been assigned to the selected wish</string>
+    <string name="toast_remove_assignment">You\'re not assigned to the selected with anymore</string>
+    <string name="toast_assigned_to_another_one">Selected wish is already assigned to another user</string>
+    <string name="toast_long_press_to_self_assign">Long press the wish to assign yourself or remove the assignment if you\'re the assignee</string>
 </resources>

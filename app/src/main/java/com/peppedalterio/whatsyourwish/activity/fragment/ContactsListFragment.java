@@ -1,4 +1,4 @@
-package com.peppedalterio.whatsyourwish;
+package com.peppedalterio.whatsyourwish.activity.fragment;
 
 import android.content.Intent;
 import android.database.Cursor;
@@ -18,6 +18,8 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import com.peppedalterio.whatsyourwish.R;
+import com.peppedalterio.whatsyourwish.activity.UserWishlistActivity;
 import com.peppedalterio.whatsyourwish.util.Contact;
 import com.peppedalterio.whatsyourwish.util.WishStrings;
 

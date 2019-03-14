@@ -1,7 +1,6 @@
-package com.peppedalterio.whatsyourwish;
+package com.peppedalterio.whatsyourwish.activity;
 
 import android.content.Intent;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,17 +8,9 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
+import com.peppedalterio.whatsyourwish.R;
+import com.peppedalterio.whatsyourwish.model.MyWishlistModel;
 import com.peppedalterio.whatsyourwish.util.InternetConnection;
-import com.peppedalterio.whatsyourwish.util.WishStrings;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class AddItemActivity extends AppCompatActivity {
 
@@ -88,42 +79,11 @@ public class AddItemActivity extends AppCompatActivity {
 
         if(!checkInternetConnection()) {
             Log.d("ADD_A_WISH", "Error");
-            return true;
+            return false;
         }
-        DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference(simNumber);
 
-        Query query = dbRef.orderByChild(WishStrings.WISH_TITLE_KEY).equalTo(title);
-
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.getChildrenCount()>0) {
-                    Log.d("ADD_A_WISH", "Exists");
-                    Toast.makeText(getApplicationContext(), getString(R.string.toast_wish_exists), Toast.LENGTH_SHORT).show();
-                } else {
-                    Log.d("ADD_A_WISH", "Not exists");
-
-                    Map<String, Object> tmpMap = new HashMap<>();
-                    tmpMap.put(WishStrings.WISH_TITLE_KEY, title);
-                    tmpMap.put(WishStrings.WISH_DESCRIPTION_KEY, description);
-
-                    DatabaseReference tmpRef = dbRef.push();
-
-                    tmpRef.updateChildren(tmpMap);
-
-                    Log.d("ADD_A_WISH", "Success");
-                    Toast.makeText(getApplicationContext(), getString(R.string.toast_add_wish_success), Toast.LENGTH_SHORT).show();
-                    finish();
-
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.e("TAG", "onCancelled", databaseError.toException());
-            }
-        });
-
+        MyWishlistModel wishlistModel = new MyWishlistModel(simNumber);
+        wishlistModel.addWishlistItem(title, description, this);
         return true;
 
     }
