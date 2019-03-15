@@ -193,6 +193,28 @@ class FormatWishDataTest {
     }
 
     /**
+     * Format with empty descrption -> everything's displayed but description
+     */
+    @Test
+    void test_formatWishDataStr6() {
+
+        String str = wishlistModel.formatWishDataStr("Titolo", "", "+391234567890", "14-03-2019");
+        System.out.println(str);
+
+        Date todayDate = Calendar.getInstance().getTime();
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+        String today = formatter.format(todayDate);
+
+        assertEquals(str, "Titolo" +
+                SEPARATOR +
+                local_self_assigned + ": +391234567890" +
+                SEPARATOR +
+                local_assign_date + ": 14-03-2019" );
+
+    }
+
+
+    /**
      * Correct pattern dd-MM-yyyy
      */
     @Test
