@@ -345,8 +345,10 @@ public class UserWishlistModel {
      */
     String formatWishDataStr(String title, String description, String assignee, String processingDate) {
 
-        if(title==null) {
-            throw new RuntimeException("Title null while formatting wish data string");
+        if (title==null) {
+            throw new NullPointerException("title is null");
+        } else if (title.isEmpty()) {
+            throw new IllegalArgumentException("tile can't be empty");
         }
 
         String wishDataStr;

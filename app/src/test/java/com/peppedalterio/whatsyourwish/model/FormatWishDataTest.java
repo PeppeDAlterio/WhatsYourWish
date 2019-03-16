@@ -201,15 +201,35 @@ class FormatWishDataTest {
         String str = wishlistModel.formatWishDataStr("Titolo", "", "+391234567890", "14-03-2019");
         System.out.println(str);
 
-        Date todayDate = Calendar.getInstance().getTime();
-        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
-        String today = formatter.format(todayDate);
-
         assertEquals(str, "Titolo" +
                 SEPARATOR +
                 local_self_assigned + ": +391234567890" +
                 SEPARATOR +
                 local_assign_date + ": 14-03-2019" );
+
+    }
+
+    /**
+     * Empty title -> RuntimeException
+     */
+    @Test
+    void test_formatWishDataStr7() {
+
+        assertThrows(IllegalArgumentException.class, () ->
+            wishlistModel.formatWishDataStr("", "Description", "+391234567890", "14-03-2019")
+        );
+
+    }
+
+    /**
+     * null title -> RuntimeException
+     */
+    @Test
+    void test_formatWishDataStr8() {
+
+        assertThrows(NullPointerException.class, () ->
+            wishlistModel.formatWishDataStr(null, "Description", "+391234567890", "14-03-2019")
+        );
 
     }
 
