@@ -345,15 +345,11 @@ public class UserWishlistModel {
      */
     String formatWishDataStr(String title, String description, String assignee, String processingDate) {
 
-        if (title==null) {
-            throw new NullPointerException("title is null");
-        } else if (title.isEmpty()) {
-            throw new IllegalArgumentException("tile can't be empty");
+        if (!MyWishlistModel.validate(title, description)) {
+            throw new IllegalArgumentException("invalid wish data");
         }
 
-        String wishDataStr;
-
-        wishDataStr = title;
+        String wishDataStr = title;
 
         if (description!=null && !description.isEmpty()) {
             wishDataStr +=  WishStrings.SEPARATOR_TOKEN +
@@ -378,7 +374,7 @@ public class UserWishlistModel {
      * @param inDate date String to be checked
      * @return true if valid, false otherwise
      */
-    boolean isValidDate(String inDate) {
+    static boolean isValidDate(String inDate) {
 
         if (inDate==null || inDate.isEmpty()) {
             return false;

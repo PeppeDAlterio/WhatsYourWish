@@ -118,7 +118,11 @@ public class MyWishlistModel {
 
     }
 
-    public void addWishlistItem(String title, String description, Activity activity) {
+    public boolean addWishlistItem(String title, String description, Activity activity) {
+
+        if(!validate(title, description)) {
+            return false;
+        }
 
         DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference(simNumber);
 
@@ -157,6 +161,27 @@ public class MyWishlistModel {
                 Log.e("TAG", "onCancelled", databaseError.toException());
             }
         });
+
+        return true;
+
+    }
+
+    static public boolean validate(String title, String description) {
+
+        if(title==null) {
+            throw new NullPointerException("title is null");
+        }
+
+        if (description==null || description.trim().isEmpty()) {
+            description = "";
+        }
+
+        return  !title.isEmpty() &&
+                title.length() <= 40 &&
+                description.length() <= 50 &&
+                !title.contains("\r\n") &&
+                !description.contains("\r\n") &&
+                !(title.trim().isEmpty());
 
     }
 

@@ -1,17 +1,14 @@
-package com.peppedalterio.whatsyourwish.activity;
+package com.peppedalterio.whatsyourwish.model;
+
+import com.peppedalterio.whatsyourwish.model.MyWishlistModel;
 
 import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class AddItemValidateTestSuite {
+class AddItemValidateTestSuite {
 
-    private AddItemActivity aia;
 
-    @BeforeEach
-    void newObject() {
-        aia = new AddItemActivity();
-    }
 
     /**
      title is nullstring
@@ -21,9 +18,8 @@ public class AddItemValidateTestSuite {
     void test_validate_0() {
 
         assertThrows(NullPointerException.class, () ->
-                aia.validate(null, "")
+                MyWishlistModel.validate(null, "")
         );
-
 
     }
 
@@ -34,7 +30,7 @@ public class AddItemValidateTestSuite {
     @Test
     void test_validate_1() {
 
-        boolean result = aia.validate("test\r\ntest", "12345678901234567890123456789012345678901234567890_");
+        boolean result = MyWishlistModel.validate("test\r\ntest", "12345678901234567890123456789012345678901234567890_");
 
         assertEquals(false, result);
 
@@ -48,7 +44,7 @@ public class AddItemValidateTestSuite {
     @Test
     void test_validate_2() {
 
-        boolean result = aia.validate("test\r\ntest", null);
+        boolean result = MyWishlistModel.validate("test\r\ntest", null);
 
         assertEquals(false, result);
 
@@ -62,7 +58,7 @@ public class AddItemValidateTestSuite {
     @Test
     void test_validate_3() {
 
-        boolean result = aia.validate("", "12345678901234567890123456789012345678901234567890_");
+        boolean result = MyWishlistModel.validate("", "12345678901234567890123456789012345678901234567890_");
 
         assertEquals(false, result);
 
@@ -77,9 +73,8 @@ public class AddItemValidateTestSuite {
     void test_validate_4() {
 
         assertThrows(NullPointerException.class, () ->
-                aia.validate(null, "")
+                MyWishlistModel.validate(null, "")
         );
-
 
     }
 
@@ -91,9 +86,8 @@ public class AddItemValidateTestSuite {
     void test_validate_5() {
 
         assertThrows(NullPointerException.class, () ->
-                aia.validate(null, "")
+                MyWishlistModel.validate(null, "")
         );
-
 
     }
 
@@ -104,7 +98,7 @@ public class AddItemValidateTestSuite {
     @Test
     void test_validate_6() {
 
-        boolean result = aia.validate("1234567890123456789012345678901234567890_", "12345678901234567890123456789012345678901234567890");
+        boolean result = MyWishlistModel.validate("1234567890123456789012345678901234567890_", "12345678901234567890123456789012345678901234567890");
 
         assertEquals(false, result);
 
@@ -118,7 +112,7 @@ public class AddItemValidateTestSuite {
     @Test
     void test_validate_7() {
 
-        boolean result = aia.validate("test\r\ntest", "test\r\ntest");
+        boolean result = MyWishlistModel.validate("test\r\ntest", "test\r\ntest");
 
         assertEquals(false, result);
 
@@ -133,9 +127,8 @@ public class AddItemValidateTestSuite {
     void test_validate_8() {
 
         assertThrows(NullPointerException.class, () ->
-                aia.validate(null, "")
+                MyWishlistModel.validate(null, "")
         );
-
 
     }
 
@@ -146,7 +139,7 @@ public class AddItemValidateTestSuite {
     @Test
     void test_validate_9() {
 
-        boolean result = aia.validate("", "");
+        boolean result = MyWishlistModel.validate("", "");
 
         assertEquals(false, result);
 
@@ -160,7 +153,7 @@ public class AddItemValidateTestSuite {
     @Test
     void test_validate_10() {
 
-        boolean result = aia.validate("1234567890123456789012345678901234567890_", "");
+        boolean result = MyWishlistModel.validate("1234567890123456789012345678901234567890_", "");
 
         assertEquals(false, result);
 
@@ -174,7 +167,7 @@ public class AddItemValidateTestSuite {
     @Test
     void test_validate_11() {
 
-        boolean result = aia.validate("", null);
+        boolean result = MyWishlistModel.validate("", null);
 
         assertEquals(false, result);
 
@@ -188,7 +181,7 @@ public class AddItemValidateTestSuite {
     @Test
     void test_validate_12() {
 
-        boolean result = aia.validate("", "12345678901234567890123456789012345678901234567890");
+        boolean result = MyWishlistModel.validate("", "12345678901234567890123456789012345678901234567890");
 
         assertEquals(false, result);
 
@@ -202,7 +195,7 @@ public class AddItemValidateTestSuite {
     @Test
     void test_validate_13() {
 
-        boolean result = aia.validate("test\r\ntest", "12345678901234567890123456789012345678901234567890");
+        boolean result = MyWishlistModel.validate("test\r\ntest", "12345678901234567890123456789012345678901234567890");
 
         assertEquals(false, result);
 
@@ -216,7 +209,7 @@ public class AddItemValidateTestSuite {
     @Test
     void test_validate_14() {
 
-        boolean result = aia.validate("1234567890123456789012345678901234567890", "");
+        boolean result = MyWishlistModel.validate("1234567890123456789012345678901234567890", "");
 
         assertEquals(true, result);
 
@@ -230,7 +223,7 @@ public class AddItemValidateTestSuite {
     @Test
     void test_validate_15() {
 
-        boolean result = aia.validate("1234567890123456789012345678901234567890", "12345678901234567890123456789012345678901234567890_");
+        boolean result = MyWishlistModel.validate("1234567890123456789012345678901234567890", "12345678901234567890123456789012345678901234567890_");
 
         assertEquals(false, result);
 
@@ -244,7 +237,7 @@ public class AddItemValidateTestSuite {
     @Test
     void test_validate_16() {
 
-        boolean result = aia.validate("", "test\r\ntest");
+        boolean result = MyWishlistModel.validate("", "test\r\ntest");
 
         assertEquals(false, result);
 
@@ -258,7 +251,7 @@ public class AddItemValidateTestSuite {
     @Test
     void test_validate_17() {
 
-        boolean result = aia.validate("1234567890123456789012345678901234567890", "12345678901234567890123456789012345678901234567890");
+        boolean result = MyWishlistModel.validate("1234567890123456789012345678901234567890", "12345678901234567890123456789012345678901234567890");
 
         assertEquals(true, result);
 
@@ -273,9 +266,8 @@ public class AddItemValidateTestSuite {
     void test_validate_18() {
 
         assertThrows(NullPointerException.class, () ->
-                aia.validate(null, "")
+                MyWishlistModel.validate(null, "")
         );
-
 
     }
 
@@ -286,7 +278,7 @@ public class AddItemValidateTestSuite {
     @Test
     void test_validate_19() {
 
-        boolean result = aia.validate("1234567890123456789012345678901234567890", "test\r\ntest");
+        boolean result = MyWishlistModel.validate("1234567890123456789012345678901234567890", "test\r\ntest");
 
         assertEquals(false, result);
 
@@ -300,7 +292,7 @@ public class AddItemValidateTestSuite {
     @Test
     void test_validate_20() {
 
-        boolean result = aia.validate("1234567890123456789012345678901234567890_", "test\r\ntest");
+        boolean result = MyWishlistModel.validate("1234567890123456789012345678901234567890_", "test\r\ntest");
 
         assertEquals(false, result);
 
@@ -314,7 +306,7 @@ public class AddItemValidateTestSuite {
     @Test
     void test_validate_21() {
 
-        boolean result = aia.validate("1234567890123456789012345678901234567890_", null);
+        boolean result = MyWishlistModel.validate("1234567890123456789012345678901234567890_", null);
 
         assertEquals(false, result);
 
@@ -328,7 +320,7 @@ public class AddItemValidateTestSuite {
     @Test
     void test_validate_22() {
 
-        boolean result = aia.validate("1234567890123456789012345678901234567890_", "12345678901234567890123456789012345678901234567890_");
+        boolean result = MyWishlistModel.validate("1234567890123456789012345678901234567890_", "12345678901234567890123456789012345678901234567890_");
 
         assertEquals(false, result);
 
@@ -342,7 +334,7 @@ public class AddItemValidateTestSuite {
     @Test
     void test_validate_23() {
 
-        boolean result = aia.validate("1234567890123456789012345678901234567890", null);
+        boolean result = MyWishlistModel.validate("1234567890123456789012345678901234567890", null);
 
         assertEquals(true, result);
 
@@ -356,7 +348,7 @@ public class AddItemValidateTestSuite {
     @Test
     void test_validate_24() {
 
-        boolean result = aia.validate("test\r\ntest", "");
+        boolean result = MyWishlistModel.validate("test\r\ntest", "");
 
         assertEquals(false, result);
 

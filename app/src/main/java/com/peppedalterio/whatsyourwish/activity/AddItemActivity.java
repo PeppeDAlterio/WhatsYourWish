@@ -83,8 +83,7 @@ public class AddItemActivity extends AppCompatActivity {
         }
 
         MyWishlistModel wishlistModel = new MyWishlistModel(simNumber);
-        wishlistModel.addWishlistItem(title, description, this);
-        return true;
+        return wishlistModel.addWishlistItem(title, description, this);
 
     }
 
@@ -105,20 +104,7 @@ public class AddItemActivity extends AppCompatActivity {
      */
     protected boolean validate(String title, String description) {
 
-        if(title==null) {
-            throw new NullPointerException("title is null");
-        }
-
-        if (description==null || description.trim().isEmpty()) {
-            description = "";
-        }
-
-        return  !title.isEmpty() &&
-                title.length() <= 40 &&
-                description.length() <= 50 &&
-                !title.contains("\r\n") &&
-                !description.contains("\r\n") &&
-                !(title.trim().isEmpty());
+        return MyWishlistModel.validate(title, description);
 
     }
 

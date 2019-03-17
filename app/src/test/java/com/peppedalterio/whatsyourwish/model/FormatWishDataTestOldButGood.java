@@ -10,7 +10,7 @@ import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class FormatWishDataTest {
+class FormatWishDataTestOldButGood {
 
     static private UserWishlistModel wishlistModel;
     static final private String local_self_assigned = "Self-assigned";
@@ -239,25 +239,25 @@ class FormatWishDataTest {
      */
     @Test
     void test_isValidDate1() {
-        boolean result = wishlistModel.isValidDate("14-03-2019");
+        boolean result = UserWishlistModel.isValidDate("14-03-2019");
         assertTrue(result);
     }
 
     @Test
     void test_isValidDate2() {
-        boolean result = wishlistModel.isValidDate("14/03/2019");
+        boolean result = UserWishlistModel.isValidDate("14/03/2019");
         assertFalse(result);
     }
 
     @Test
     void test_isValidDate3() {
-        boolean result = wishlistModel.isValidDate("");
+        boolean result = UserWishlistModel.isValidDate("");
         assertFalse(result);
     }
 
     @Test
     void test_isValidDate4() {
-        boolean result = wishlistModel.isValidDate(null);
+        boolean result = UserWishlistModel.isValidDate(null);
         assertFalse(result);
     }
 
