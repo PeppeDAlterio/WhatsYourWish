@@ -273,4 +273,52 @@ class FormatWishDataTestSuite {
 
     }
 
+    /**
+     * Empty title -> IllegalArgumentException
+     */
+    @Test
+    void test_formatWishDataStr15() {
+
+        assertThrows(IllegalArgumentException.class, () ->
+                wishlistModel.formatWishDataStr("", "Description", "+391234567890", "14-03-2019")
+        );
+
+    }
+
+    /**
+     * null title -> IllegalArgumentException
+     */
+    @Test
+    void test_formatWishDataStr16() {
+
+        assertThrows(IllegalArgumentException.class, () ->
+                wishlistModel.formatWishDataStr(null, "Description", "+391234567890", "14-03-2019")
+        );
+
+    }
+
+    /**
+     * invalid title -> IllegalArgumentException
+     */
+    @Test
+    void test_formatWishDataStr17() {
+
+        assertThrows(IllegalArgumentException.class, () ->
+                wishlistModel.formatWishDataStr("prova\r\n", "Description", "+391234567890", "14-03-2019")
+        );
+
+    }
+
+    /**
+     * invalid description -> IllegalArgumentException
+     */
+    @Test
+    void test_formatWishDataStr18() {
+
+        assertThrows(IllegalArgumentException.class, () ->
+                wishlistModel.formatWishDataStr("titolo", "Desc\r\nri", "+391234567890", "14-03-2019")
+        );
+
+    }
+
 }

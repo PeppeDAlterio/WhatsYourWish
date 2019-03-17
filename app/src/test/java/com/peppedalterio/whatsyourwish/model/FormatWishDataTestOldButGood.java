@@ -227,7 +227,7 @@ class FormatWishDataTestOldButGood {
     @Test
     void test_formatWishDataStr8() {
 
-        assertThrows(NullPointerException.class, () ->
+        assertThrows(IllegalArgumentException.class, () ->
             wishlistModel.formatWishDataStr(null, "Description", "+391234567890", "14-03-2019")
         );
 
