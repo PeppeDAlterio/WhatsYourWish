@@ -41,9 +41,9 @@ import static org.hamcrest.Matchers.is;
 public class WishlistTestSuite {
 
     private final String AVD_NUMBER = "+15555215554";
-    private final String AVD_CONTACT_NAME = "Virtual Device";
+    private final String AVD_CONTACT_NAME = "Virtual";
 
-    private final String FAKE_CONTACT = "Fake Contact\r\n0000000000";
+    private final String FAKE_CONTACT = "Fake Contact";
 
     @Rule
     public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class);
@@ -63,15 +63,34 @@ public class WishlistTestSuite {
         // The recommended way to handle such scenarios is to use Espresso idling resources:
         // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
         try {
-            Thread.sleep(1500);
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        ViewInteraction appCompatEditText = onView(
+                allOf(withId(R.id.contactssearchbar),
+                        childAtPosition(
+                                withParent(withId(R.id.container)),
+                                1),
+                        isDisplayed()));
+        appCompatEditText.perform(replaceText(FAKE_CONTACT), closeSoftKeyboard());
+
+        try {
+            Thread.sleep(1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
         onView(withText(FAKE_CONTACT)).check(matches(isDisplayed()));
 
-        ViewInteraction fakeContact = onView(withText(FAKE_CONTACT));
-        fakeContact.perform(click());
+        DataInteraction appCompatTextView2 = onData(anything())
+                .inAdapterView(allOf(withId(R.id.contactlistview),
+                        childAtPosition(
+                                withClassName(is("android.support.constraint.ConstraintLayout")),
+                                0)))
+                .atPosition(0);
+        appCompatTextView2.perform(click());
 
 
         onView(withText(R.string.toast_user_not_found)).inRoot(new ToastMatcher())
