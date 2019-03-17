@@ -105,8 +105,13 @@ public class AddItemActivity extends AppCompatActivity {
      */
     protected boolean validate(String title, String description) {
 
-        if (description.trim().isEmpty())
-            description="";
+        if(title==null) {
+            throw new NullPointerException("title is null");
+        }
+
+        if (description==null || description.trim().isEmpty()) {
+            description = "";
+        }
 
         return  !title.isEmpty() &&
                 title.length() <= 40 &&
@@ -116,4 +121,5 @@ public class AddItemActivity extends AppCompatActivity {
                 !(title.trim().isEmpty());
 
     }
+
 }
