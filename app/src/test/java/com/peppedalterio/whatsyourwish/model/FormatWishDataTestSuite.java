@@ -286,12 +286,12 @@ class FormatWishDataTestSuite {
     }
 
     /**
-     * null title -> IllegalArgumentException
+     * null title -> NullPointerException
      */
     @Test
     void test_formatWishDataStr16() {
 
-        assertThrows(IllegalArgumentException.class, () ->
+        assertThrows(NullPointerException.class, () ->
                 wishlistModel.formatWishDataStr(null, "Description", "+391234567890", "14-03-2019")
         );
 

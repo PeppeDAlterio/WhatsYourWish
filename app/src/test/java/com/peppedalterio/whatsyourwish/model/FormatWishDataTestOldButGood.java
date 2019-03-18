@@ -210,7 +210,7 @@ class FormatWishDataTestOldButGood {
     }
 
     /**
-     * Empty title -> RuntimeException
+     * Empty title -> IllegalArgumentException
      */
     @Test
     void test_formatWishDataStr7() {
@@ -222,12 +222,12 @@ class FormatWishDataTestOldButGood {
     }
 
     /**
-     * null title -> RuntimeException
+     * null title -> NullPointerException
      */
     @Test
     void test_formatWishDataStr8() {
 
-        assertThrows(IllegalArgumentException.class, () ->
+        assertThrows(NullPointerException.class, () ->
             wishlistModel.formatWishDataStr(null, "Description", "+391234567890", "14-03-2019")
         );
 
@@ -266,7 +266,7 @@ class FormatWishDataTestOldButGood {
      */
     @Test
     void test_isValidDate5() {
-        boolean result = wishlistModel.isValidDate("31-02-2019");
+        boolean result = UserWishlistModel.isValidDate("31-02-2019");
         assertFalse(result);
     }
 
