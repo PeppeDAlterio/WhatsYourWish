@@ -7,14 +7,17 @@ android {
         applicationId "com.peppedalterio.whatsyourwish"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 4
-        versionName "0.91"
+        versionCode 5
+        versionName "0.92"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            testCoverageEnabled true
         }
     }
     compileOptions {

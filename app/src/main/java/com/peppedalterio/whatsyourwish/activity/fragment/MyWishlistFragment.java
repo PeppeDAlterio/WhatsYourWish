@@ -144,6 +144,7 @@ public class MyWishlistFragment extends Fragment {
                 Toast.LENGTH_LONG).show();
         } else {
             lastRefreshTime = SystemClock.elapsedRealtime();
+            if(!checkInternetConnection()) return;
             wishlistModel.refreshMyWishList();
         }
 

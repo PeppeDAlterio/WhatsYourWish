@@ -1,4 +1,4 @@
-package com.peppedalterio.whatsyourwish.activity;
+package com.peppedalterio.whatsyourwish;
 
 
 import android.annotation.SuppressLint;
@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.view.ViewParent;
 
 import com.peppedalterio.whatsyourwish.R;
+import com.peppedalterio.whatsyourwish.activity.MainActivity;
 import com.peppedalterio.whatsyourwish.utils.ToastMatcher;
 
 import org.hamcrest.Description;
