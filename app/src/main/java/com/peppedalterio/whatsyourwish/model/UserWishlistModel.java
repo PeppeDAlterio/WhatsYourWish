@@ -342,6 +342,7 @@ public class UserWishlistModel {
      * @param assignee wish assignee
      * @param processingDate date on which the assignee took over the wish. You can also pass null or empty for today's date
      * @return Formatted string for list view item for user wish list
+     * @throws NullPointerException if title is null, IllegalArgumentException if title/description invalid
      */
     String formatWishDataStr(String title, String description, String assignee, String processingDate) {
 

@@ -166,6 +166,14 @@ public class MyWishlistModel {
 
     }
 
+    /**
+     * This method checks if the title and the description of the wish is valid:
+     * title can't be null or empty and lesser or eq. than 40 chars
+     * description is optional, but have to be lesser or eq. than 50 chars
+     * @param title wish title
+     * @param description wish description
+     * @throws NullPointerException if title is null, IllegalArgumentException if title/description invalid
+     */
     static public boolean validate(String title, String description) {
 
         if(title==null) {
