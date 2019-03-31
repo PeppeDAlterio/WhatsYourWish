@@ -25,12 +25,12 @@ public class MyWishlistModel {
 
     private DatabaseReference dbRef;
     private String simNumber;
-    private ArrayAdapter<String> wishListAdapter;
+    private WeakReference<ArrayAdapter<String>> wishListAdapter;
     private ChildEventListener childEventListener; //db
 
     public MyWishlistModel(String simNumber, ArrayAdapter<String> wishListAdapter) {
         this.simNumber = simNumber;
-        this.wishListAdapter = wishListAdapter;
+        this.wishListAdapter = new WeakReference<>(wishListAdapter);
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         dbRef = database.getReference(simNumber);
@@ -49,7 +49,7 @@ public class MyWishlistModel {
         if(childEventListener!=null)
             dbRef.removeEventListener(childEventListener);
 
-        wishListAdapter.clear();
+        wishListAdapter.get().clear();
 
         childEventListener = new ChildEventListener() {
             @Override
@@ -63,7 +63,7 @@ public class MyWishlistModel {
                 String description = dataSnapshot.child(WishStrings.WISH_DESCRIPTION_KEY).getValue(String.class);
                 str += title + WishStrings.SEPARATOR_TOKEN + description;
 
-                wishListAdapter.add(str);
+                wishListAdapter.get().add(str);
 
             }
 
@@ -79,7 +79,7 @@ public class MyWishlistModel {
                 String str = dataSnapshot.child(WishStrings.WISH_TITLE_KEY).getValue(String.class) + WishStrings.SEPARATOR_TOKEN +
                         dataSnapshot.child(WishStrings.WISH_DESCRIPTION_KEY).getValue(String.class);
 
-                wishListAdapter.remove(str);
+                wishListAdapter.get().remove(str);
 
             }
 

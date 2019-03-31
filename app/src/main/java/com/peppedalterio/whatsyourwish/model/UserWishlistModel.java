@@ -21,6 +21,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.peppedalterio.whatsyourwish.R;
 import com.peppedalterio.whatsyourwish.util.WishStrings;
 
+import java.lang.ref.WeakReference;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -36,13 +37,13 @@ public class UserWishlistModel {
     private FirebaseDatabase database;// = FirebaseDatabase.getInstance();
     private DatabaseReference dbRef;
 
-    private ArrayAdapter<String> listViewAdapter;
+    private WeakReference<ArrayAdapter<String>> listViewAdapter;
 
     public UserWishlistModel(String contactNumber, ArrayAdapter<String> listViewAdapter,
                              String self_assigned, String assign_date, String description) {
 
         this.contactNumber = contactNumber;
-        this.listViewAdapter = listViewAdapter;
+        this.listViewAdapter = new WeakReference<>(listViewAdapter);
         local_self_assigned = self_assigned;
         local_assign_date = assign_date;
         local_description = description;
@@ -59,6 +60,8 @@ public class UserWishlistModel {
 
     public void getUserWishlist(Activity activity) {
 
+        WeakReference<Activity> activityWeakReference = new WeakReference<>(activity);
+
         if (contactNumber==null) {
             return;
         }
@@ -70,7 +73,7 @@ public class UserWishlistModel {
             (if exists) from the db and retrieving the wishlist, otherwise
          */
         if (contactDBNumber != null && PhoneNumberUtils.compare(contactDBNumber, contactNumber)) {
-            loadWishList(listViewAdapter);
+            loadWishList(listViewAdapter.get());
         } else {
 
             ValueEventListener loadWishListEventListener = new ValueEventListener() {
@@ -81,17 +84,17 @@ public class UserWishlistModel {
 
                         if (ds.getKey() != null && PhoneNumberUtils.compare(ds.getKey(), contactNumber)) {
                             contactDBNumber = ds.getKey();
-                            ((TextView) activity.findViewById(R.id.userwishlistnumber)).setText(contactDBNumber);
+                            ((TextView) activityWeakReference.get().findViewById(R.id.userwishlistnumber)).setText(contactDBNumber);
                             break;
                         }
 
                     }
                     if (contactDBNumber != null) {
-                        loadWishList(listViewAdapter);
+                        loadWishList(listViewAdapter.get());
                     } else {
-                        Toast.makeText(activity.getApplicationContext(), activity.getString(R.string.toast_user_not_found),
+                        Toast.makeText(activityWeakReference.get().getApplicationContext(), activity.getString(R.string.toast_user_not_found),
                                 Toast.LENGTH_SHORT).show();
-                        activity.finish();
+                        activityWeakReference.get().finish();
                     }
                 }
 
@@ -271,8 +274,8 @@ public class UserWishlistModel {
                         if(!wishFormattedData.contains(": "+currentAssignee+WishStrings.SEPARATOR_TOKEN)) {
                             // we don't need a null-test of wish title because we're already sure that's not null (found in db)
                             newWishItemStr = formatWishDataStr(wishTitle, wishDescription, currentAssignee, currentAssigneeDate);
-                            listViewAdapter.remove(wishFormattedData);
-                            listViewAdapter.insert(newWishItemStr, pos);
+                            listViewAdapter.get().remove(wishFormattedData);
+                            listViewAdapter.get().insert(newWishItemStr, pos);
                         }
                         return;
                     }
@@ -297,8 +300,8 @@ public class UserWishlistModel {
                     /* apply the change */
                     ds.child(WishStrings.WISH_ASSIGNEE).getRef().setValue(newAssignee);
                     ds.child(WishStrings.PROCESSING_WISH_SINCE).getRef().setValue(newAssigneeDate);
-                    listViewAdapter.remove(wishFormattedData);
-                    listViewAdapter.insert(newWishItemStr, pos);
+                    listViewAdapter.get().remove(wishFormattedData);
+                    listViewAdapter.get().insert(newWishItemStr, pos);
 
                     /* show and informative toast */
                     if(newAssignee.isEmpty()) {
