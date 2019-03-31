@@ -17,6 +17,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.peppedalterio.whatsyourwish.R;
 import com.peppedalterio.whatsyourwish.util.WishStrings;
 
+import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -120,6 +121,8 @@ public class MyWishlistModel {
 
     public boolean addWishlistItem(String title, String description, Activity activity) {
 
+        WeakReference<Activity> activityRef = new WeakReference<>(activity);
+
         if(!validate(title, description)) {
             return false;
         }
@@ -133,7 +136,7 @@ public class MyWishlistModel {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.getChildrenCount()>0) {
                     Log.d("ADD_A_WISH", "Exists");
-                    Toast.makeText(activity.getApplicationContext(),
+                    Toast.makeText(activityRef.get().getApplicationContext(),
                             activity.getString(R.string.toast_wish_exists), Toast.LENGTH_SHORT).show();
                 } else {
                     Log.d("ADD_A_WISH", "Not exists");
@@ -149,9 +152,9 @@ public class MyWishlistModel {
                     tmpRef.updateChildren(tmpMap);
 
                     Log.d("ADD_A_WISH", "Success");
-                    Toast.makeText(activity.getApplicationContext(),
+                    Toast.makeText(activityRef.get().getApplicationContext(),
                             activity.getString(R.string.toast_add_wish_success), Toast.LENGTH_SHORT).show();
-                    activity.finish();
+                    activityRef.get().finish();
 
                 }
             }
