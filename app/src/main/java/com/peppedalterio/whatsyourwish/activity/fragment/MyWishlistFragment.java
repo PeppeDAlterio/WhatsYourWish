@@ -141,6 +141,7 @@ public class MyWishlistFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        wishlistModel.removeEventListener();
         wishlistModel = null;
     }
 
