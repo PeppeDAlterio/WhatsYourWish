@@ -43,6 +43,11 @@ public class MyWishlistModel {
         dbRef = database.getReference(simNumber);
     }
 
+    public void removeEventListener() {
+        if(childEventListener!=null)
+            dbRef.removeEventListener(childEventListener);
+    }
+
     public void refreshMyWishList() {
 
         if(childEventListener!=null)

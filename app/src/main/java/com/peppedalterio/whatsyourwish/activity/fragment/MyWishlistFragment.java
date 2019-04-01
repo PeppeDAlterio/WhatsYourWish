@@ -38,6 +38,7 @@ public class MyWishlistFragment extends Fragment {
     private String simNumber;
     private ArrayAdapter<String> wishListAdapter;
     private ChildEventListener childEventListener;
+    private MyWishlistModel wishlistModel;
 
     /*
      * Action to be performed if the client disconnects from the Internet
@@ -86,6 +87,12 @@ public class MyWishlistFragment extends Fragment {
 
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        wishlistModel.removeEventListener();
+    }
+
     @SuppressLint("HardwareIds")
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -106,7 +113,7 @@ public class MyWishlistFragment extends Fragment {
 
         simNumber = telemamanger.getLine1Number();
 
-        MyWishlistModel wishlistModel = new MyWishlistModel(simNumber, wishListAdapter);
+        wishlistModel = new MyWishlistModel(simNumber, wishListAdapter);
 
         if(!simNumber.isEmpty()) {
 
