@@ -40,6 +40,10 @@ public class MyWishlistFragment extends Fragment {
     private ChildEventListener childEventListener;
     private MyWishlistModel wishlistModel;
 
+    public static MyWishlistFragment newInstance() {
+        return new MyWishlistFragment();
+    }
+
     /*
      * Action to be performed if the client disconnects from the Internet
      */

@@ -12,8 +12,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 
-import com.peppedalterio.whatsyourwish.activity.fragment.ContactsListFragment;
-import com.peppedalterio.whatsyourwish.activity.fragment.MyWishlistFragment;
 import com.peppedalterio.whatsyourwish.R;
 import com.peppedalterio.whatsyourwish.activity.adapter.SectionsPageAdapter;
 
@@ -62,10 +60,14 @@ public class MainActivity extends AppCompatActivity {
      *
      */
     private void setupViewPage(ViewPager viewPager) {
-        SectionsPageAdapter adapter = new SectionsPageAdapter(getSupportFragmentManager());
-        adapter.addFragment(new ContactsListFragment(), getString(R.string.contactslisttitletab));
-        adapter.addFragment(new MyWishlistFragment(), getString(R.string.wishlisttitletab));
-        viewPager.setAdapter(adapter);
+        //Log.d("test_lista_frag", "isEmpty="+getSupportFragmentManager().getFragments().isEmpty());
+        if(viewPager.getAdapter()==null) {
+            SectionsPageAdapter adapter = new SectionsPageAdapter(getSupportFragmentManager());
+            adapter.addFragmentTitle(0, getString(R.string.contactslisttitletab));
+            adapter.addFragmentTitle(1, getString(R.string.wishlisttitletab));
+            viewPager.setAdapter(adapter);
+        }
+        //Log.d("test_add", "res="+new MyWishlistFragment().isAdded());
     }
 
 

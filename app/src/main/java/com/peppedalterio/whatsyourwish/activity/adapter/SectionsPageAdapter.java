@@ -5,22 +5,29 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import java.lang.ref.WeakReference;
+import com.peppedalterio.whatsyourwish.activity.fragment.ContactsListFragment;
+import com.peppedalterio.whatsyourwish.activity.fragment.MyWishlistFragment;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class SectionsPageAdapter extends FragmentPagerAdapter {
 
-    private final List<WeakReference<Fragment>> fragmentList = new ArrayList<>();
+    private static final int FRAGMENTS_NUMBER = 2;
+    //private final List<Fragment> fragmentList = new ArrayList<>();
     private final List<String> fragmentTitleList = new ArrayList<>();
 
     public SectionsPageAdapter(FragmentManager fm) {
         super(fm);
     }
 
-    public void addFragment(Fragment fragment, String title) {
-        fragmentList.add(new WeakReference<>(fragment));
+    /*public void addFragment(Fragment fragment, String title) {
+        fragmentList.add(fragment);
         fragmentTitleList.add(title);
+    }*/
+
+    public void addFragmentTitle(int pos, String title) {
+        fragmentTitleList.add(pos, title);
     }
 
     @Nullable
@@ -31,11 +38,20 @@ public class SectionsPageAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int i) {
-        return fragmentList.get(i).get();
+        switch (i) {
+            case 0:
+                return ContactsListFragment.newInstance();
+                //break;
+            case 1:
+                return MyWishlistFragment.newInstance();
+                //break;
+            default:
+                return null;
+        }
     }
 
     @Override
     public int getCount() {
-        return fragmentList.size();
+        return FRAGMENTS_NUMBER;
     }
 }

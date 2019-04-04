@@ -49,6 +49,10 @@ public class ContactsListFragment extends Fragment {
     private static final String SELECTION =
             ContactsContract.CommonDataKinds.Phone.NUMBER + " IS NOT NULL";
 
+    public static ContactsListFragment newInstance() {
+        return new ContactsListFragment();
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
