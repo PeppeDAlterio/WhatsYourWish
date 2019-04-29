@@ -117,9 +117,9 @@ public class MyWishlistFragment extends Fragment {
 
         simNumber = telemamanger.getLine1Number();
 
-        wishlistModel = new MyWishlistModel(simNumber, wishListAdapter);
+        if( simNumber!=null && !simNumber.isEmpty() ) {
 
-        if(!simNumber.isEmpty()) {
+            wishlistModel = new MyWishlistModel(simNumber, wishListAdapter);
 
             Log.d("SIM_NUMBER", "num=" + simNumber);
 
