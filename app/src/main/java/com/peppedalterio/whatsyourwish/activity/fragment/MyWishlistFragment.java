@@ -94,7 +94,8 @@ public class MyWishlistFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        wishlistModel.removeEventListener();
+        if(wishlistModel!=null)
+            wishlistModel.removeEventListener();
     }
 
     @SuppressLint("HardwareIds")
